@@ -1,0 +1,22 @@
+{
+    "name": "truthlens-canada",
+    "version": "0.1.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "lint": "echo \"No lint configured yet\"",
+        "typecheck": "tsc --noEmit",
+        "validate:constitution": "tsx scripts/validate-constitution.ts",
+        "validate:audit": "tsx scripts/validate-audit.ts",
+        "generate:coverage": "tsx scripts/generate-invariant-coverage.ts"
+    },
+    "devDependencies": {
+        "@types/node": "^20.11.0",
+        "@types/react": "^18.3.4",
+        "@types/jest": "^29.5.3",
+        "ajv": "^8.12.0",
+        "react": "^18.3.1",
+        "tsx": "^2.1.0",
+        "typescript": "^5.6.2"
+    }
+}

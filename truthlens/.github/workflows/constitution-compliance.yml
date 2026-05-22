@@ -1,0 +1,45 @@
+name: Constitution Compliance
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  constitution-compliance:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run lint
+        run: npm run lint
+
+      - name: Run typecheck
+        run: npm run typecheck
+
+      - name: Validate audit schema
+        run: npm run validate:audit
+
+      - name: Run constitutional checks
+        run: npm run validate:constitution
+
+      - name: Generate invariant coverage report
+        run: npm run generate:coverage
+
+      - name: Upload invariant report
+        uses: actions/upload-artifact@v4
+        with:
+          name: invariant-coverage
+          path: reports/invariant-coverage.json

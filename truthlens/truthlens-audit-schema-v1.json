@@ -1,0 +1,83 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "title": "TruthLens Audit Schema",
+    "type": "object",
+    "properties": {
+        "protocol": {
+            "type": "object",
+            "properties": {
+                "constitution_version": {
+                    "type": "string"
+                },
+                "audit_schema_version": {
+                    "type": "string"
+                },
+                "signals_registry_version": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "constitution_version",
+                "audit_schema_version",
+                "signals_registry_version"
+            ]
+        },
+        "article": {
+            "type": "object",
+            "properties": {
+                "url": {
+                    "type": "string",
+                    "format": "uri"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "timestamp": {
+                    "type": "string",
+                    "format": "date-time"
+                }
+            },
+            "required": [
+                "url",
+                "title",
+                "timestamp"
+            ]
+        },
+        "signals": {
+            "type": "array",
+            "items": {
+                "type": "object"
+            }
+        },
+        "interpretation": {
+            "type": "object",
+            "properties": {
+                "layer1": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "layer1"
+            ]
+        },
+        "known_limits": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "exported_at": {
+            "type": "string",
+            "format": "date-time"
+        }
+    },
+    "required": [
+        "protocol",
+        "article",
+        "signals",
+        "interpretation",
+        "known_limits",
+        "exported_at"
+    ],
+    "additionalProperties": false
+}

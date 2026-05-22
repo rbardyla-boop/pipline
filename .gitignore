@@ -1,0 +1,6 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+logs/runs/*.json
+logs/zeitgeist_cache.json

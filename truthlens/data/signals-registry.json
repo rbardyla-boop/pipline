@@ -1,0 +1,23 @@
+[
+    {
+        "id": "urgency",
+        "why": "Detects compression-pressure rhetoric and time scarcity framing.",
+        "risk_if_misused": "May overfire during legitimate emergencies.",
+        "failure_modes": [
+            "Breaking news inflation",
+            "Emergency event overfiring",
+            "Headline-body mismatch"
+        ],
+        "minimal_justification": "Core rhetorical signal with high explanatory value."
+    },
+    {
+        "id": "authority",
+        "why": "Detects institutional reliance framing.",
+        "risk_if_misused": "May incorrectly penalize legitimate expertise.",
+        "failure_modes": [
+            "Scientific consensus ambiguity",
+            "Expert quotation saturation"
+        ],
+        "minimal_justification": "Distinct from emotional amplification signals."
+    }
+]

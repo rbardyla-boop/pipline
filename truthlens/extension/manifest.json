@@ -1,0 +1,24 @@
+{
+    "manifest_version": 3,
+    "name": "TruthLens — Unslop Web Engine",
+    "version": "0.2.0",
+    "description": "Real-time client-side rhetoric analysis and UEE signal overlay.",
+    "permissions": [
+        "activeTab",
+        "storage"
+    ],
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content.js"],
+            "run_at": "document_idle"
+        }
+    ],
+    "action": {
+        "default_popup": "popup.html",
+        "default_title": "TruthLens Signal Analyzer"
+    },
+    "icons": {
+        "48": "icon-48.png"
+    }
+}
