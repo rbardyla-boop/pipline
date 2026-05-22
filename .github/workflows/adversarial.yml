@@ -1,0 +1,188 @@
+name: Adversarial Red-Team Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  # Also runs on schedule to catch model behavior drift
+  schedule:
+    - cron: "0 8 * * 1"  # Mondays at 08:00 UTC
+
+jobs:
+  promptfoo-injection:
+    name: "promptfoo — Prompt Injection Tests"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install promptfoo
+        run: npm install -g promptfoo
+
+      - name: Run prompt injection test suite
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          mkdir -p logs
+          promptfoo eval \
+            --config ci/tests/promptfoo.yaml \
+            --no-cache \
+            --output logs/promptfoo-results.json
+        # promptfoo exits 1 if any assertion fails
+
+      - name: Run framing injection test suite
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          promptfoo eval \
+            --config ci/tests/framing-injection.yaml \
+            --no-cache \
+            --output logs/framing-results.json
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: adversarial-test-results
+          path: |
+            logs/promptfoo-results.json
+            logs/framing-results.json
+
+  dependency-inversion-check:
+    name: "Dependency Inversion Guard"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run import graph analyser (no OPA binary required)
+        run: python ci/scripts/check_imports.py
+        # grep-based fallback always runs even without OPA binary
+
+      - name: Assert signals.py produces correct signal types
+        run: |
+          python - <<'EOF'
+          import sys
+          sys.path.insert(0, ".")
+          from signals import run_analysis, format_signal_profile, SignalResult
+
+          test_text = "URGENT: dangerous crisis threatening everyone immediately. Experts confirm."
+          results = run_analysis(test_text)
+
+          assert isinstance(results, list), "run_analysis must return a list"
+          assert all(isinstance(r, SignalResult) for r in results), "All items must be SignalResult"
+          for r in results:
+              assert 0.0 <= r.score <= 1.0, f"Signal score out of range: {r.id}={r.score}"
+              assert 0.0 <= r.uncertainty <= 1.0, f"Uncertainty out of range: {r.id}={r.uncertainty}"
+
+          profile = format_signal_profile(results)
+          assert isinstance(profile, str), "format_signal_profile must return str"
+
+          # Verify signals module imports NO interpretation modules
+          import importlib, ast
+          with open("signals.py") as f:
+              tree = ast.parse(f.read())
+          imports = []
+          for node in ast.walk(tree):
+              if isinstance(node, ast.Import):
+                  imports.extend(a.name for a in node.names)
+              elif isinstance(node, ast.ImportFrom) and node.module:
+                  imports.append(node.module)
+
+          forbidden = {"concept_rater", "sandbox", "orchestrator", "engine", "zeitgeist"}
+          violations = forbidden & set(imports)
+          if violations:
+              print(f"FAIL: signals.py imports forbidden modules: {violations}")
+              sys.exit(1)
+
+          print(f"PASS: signals.py correct — {len(results)} signals, no forbidden imports")
+          EOF
+
+  schema-corruption-guard:
+    name: "Audit Schema Corruption Tests"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install AJV CLI
+        run: npm install -g ajv-cli ajv-formats
+
+      - name: Test valid audit record passes schema
+        run: |
+          python - <<'EOF' > /tmp/valid_audit.json
+          import json
+          from datetime import datetime, timezone
+          print(json.dumps({
+              "protocol": {"constitution_version": "1.0", "audit_schema_version": "1", "signals_registry_version": "1.0"},
+              "article": {"url": "urn:pipeline:test", "title": "Test", "timestamp": datetime.now(timezone.utc).isoformat()},
+              "signals": [{"id": "urgency", "score": 0.5, "label": "Urgency"}],
+              "interpretation": {"layer1": "HIT"},
+              "known_limits": ["Test limit"],
+              "exported_at": datetime.now(timezone.utc).isoformat()
+          }, indent=2))
+          EOF
+          ajv validate -s truthlens/truthlens-audit-schema-v1.json -d /tmp/valid_audit.json --spec=draft2020 && echo "PASS: Valid record accepted"
+
+      - name: Test missing known_limits fails schema
+        run: |
+          python - <<'EOF' > /tmp/invalid_audit.json
+          import json
+          from datetime import datetime, timezone
+          print(json.dumps({
+              "protocol": {"constitution_version": "1.0", "audit_schema_version": "1", "signals_registry_version": "1.0"},
+              "article": {"url": "urn:pipeline:test", "title": "Test", "timestamp": datetime.now(timezone.utc).isoformat()},
+              "signals": [],
+              "interpretation": {"layer1": "SLOP"},
+              "exported_at": datetime.now(timezone.utc).isoformat()
+          }, indent=2))
+          EOF
+          if ajv validate -s truthlens/truthlens-audit-schema-v1.json -d /tmp/invalid_audit.json --spec=draft2020 2>/dev/null; then
+            echo "FAIL: Schema accepted invalid record (missing known_limits)"
+            exit 1
+          fi
+          echo "PASS: Schema correctly rejected record missing known_limits"
+
+      - name: Test additionalProperties fails schema
+        run: |
+          python - <<'EOF' > /tmp/extra_fields.json
+          import json
+          from datetime import datetime, timezone
+          print(json.dumps({
+              "protocol": {"constitution_version": "1.0", "audit_schema_version": "1", "signals_registry_version": "1.0"},
+              "article": {"url": "urn:pipeline:test", "title": "Test", "timestamp": datetime.now(timezone.utc).isoformat()},
+              "signals": [],
+              "interpretation": {"layer1": "HIT"},
+              "known_limits": ["Test"],
+              "exported_at": datetime.now(timezone.utc).isoformat(),
+              "debug": true,
+              "injected_field": "adversarial"
+          }, indent=2))
+          EOF
+          if ajv validate -s truthlens/truthlens-audit-schema-v1.json -d /tmp/extra_fields.json --spec=draft2020 2>/dev/null; then
+            echo "FAIL: Schema accepted additional properties"
+            exit 1
+          fi
+          echo "PASS: Schema correctly rejected additionalProperties"

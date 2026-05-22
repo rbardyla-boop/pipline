@@ -1,0 +1,65 @@
+# Trivy vulnerability scanner configuration for TruthLens Pipeline
+# Reference: aquasecurity/trivy
+#
+# Used by: .github/workflows/security-scan.yml
+# Scans: Python dependencies, Docker image, filesystem
+
+# Severity threshold — CRITICAL and HIGH fail CI, MEDIUM/LOW are informational
+severity:
+  - CRITICAL
+  - HIGH
+
+# Exit code when vulnerabilities are found at severity threshold
+exit-code: 1
+
+# Ignore unfixed vulnerabilities (still report them)
+ignore-unfixed: false
+
+# Scan targets
+scan:
+  # Python dependency scan (requirements.txt + .venv/)
+  filesystem:
+    enabled: true
+    scanners:
+      - vuln
+      - secret
+      - misconfig
+    paths:
+      - requirements.txt
+      - requirements-security.txt
+
+  # Secret scan — detect leaked credentials in source files
+  secret:
+    enabled: true
+    config: ci/scanning/trivy-secret.yaml
+
+  # Docker image scan (after build)
+  image:
+    enabled: true
+    # Built by CI as part of docker build step
+    image_ref: "pipline:ci"
+    scanners:
+      - vuln
+      - misconfig
+
+# Secret detection patterns (extends trivy defaults)
+# File: ci/scanning/trivy-secret.yaml (referenced above)
+
+# Output format
+format: json
+output: logs/trivy-results.json
+
+# Cache
+cache-dir: .cache/trivy
+
+# Skip directories
+skip-dirs:
+  - .venv
+  - __pycache__
+  - node_modules
+  - .git
+
+# Skip files
+skip-files:
+  - "*.pyc"
+  - "*.pyo"

@@ -30,10 +30,10 @@ ANTI_OPT_PATTERNS = [
 
 class ConceptRater:
     def __init__(self):
-        from anthropic import Anthropic
         from dotenv import load_dotenv
+        from security.firewall import LlamaFirewallClient
         load_dotenv()
-        self.client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        self.client = LlamaFirewallClient()
 
     def ritual_cost_score(self, text: str) -> float:
         hits = sum(1 for p in FRICTION_PATTERNS if re.search(p, text, re.IGNORECASE))

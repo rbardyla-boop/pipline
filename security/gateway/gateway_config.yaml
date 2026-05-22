@@ -1,0 +1,64 @@
+# AgentGateway configuration for TruthLens Pipeline
+# Reference: https://agentgateway.dev
+#
+# In containerized mode: pipeline calls this gateway, gateway holds credentials.
+# In local dev mode: gateway runs on localhost:8080 as optional pass-through.
+
+server:
+  host: "0.0.0.0"
+  port: 8080
+  read_timeout_seconds: 60
+  write_timeout_seconds: 60
+
+upstreams:
+  anthropic:
+    # Routes pipeline → Anthropic API
+    # Credentials injected by gateway from host environment, never from container
+    target_url: "https://api.anthropic.com"
+    path_prefix: "/anthropic"
+    credential_env: "ANTHROPIC_API_KEY"
+    credential_header: "x-api-key"
+    rate_limit:
+      requests_per_minute: 60
+      burst: 10
+    timeout_seconds: 45
+    retry:
+      max_attempts: 3
+      base_delay_seconds: 2
+      max_delay_seconds: 30
+
+  tavily:
+    # Routes pipeline → Tavily search API
+    target_url: "https://api.tavily.com"
+    path_prefix: "/tavily"
+    credential_env: "TAVILY_API_KEY"
+    credential_header: "x-api-key"
+    rate_limit:
+      requests_per_minute: 30
+      burst: 5
+    timeout_seconds: 20
+
+inspection:
+  # Scan all request/response bodies for injection patterns
+  prompt_injection_scan: true
+  credential_scan: true
+  output_sanitize: true
+  # Block requests containing these patterns (regex)
+  block_patterns:
+    - "(?i)(ignore|disregard).*(previous|prior).*(instructions?|rules?)"
+    - "sk-ant-[a-zA-Z0-9\\-]{20,}"
+    - "tvly-[a-zA-Z0-9\\-]{20,}"
+
+audit:
+  # Emit audit events compatible with truthlens-audit-schema-v1.json
+  enabled: true
+  destination: "logs/audit/"
+  format: "json"
+  # Strip credentials before logging (never log API keys)
+  redact_headers:
+    - "x-api-key"
+    - "authorization"
+
+health:
+  endpoint: "/health"
+  interval_seconds: 30

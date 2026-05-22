@@ -2,12 +2,13 @@ import os
 import json
 from typing import TypedDict, Dict, Any, Optional, List
 from langgraph.graph import StateGraph, END
-from engine import NoveltySearchEngine
+from engine import NoveltySearchEngine, write_terminal_archive
 from zeitgeist import ZeitgeistInjector
 from sandbox import CulturalSandbox
 from concept_rater import ConceptRater, PLATEAU_DELTA, MAX_IMPROVEMENT_LOOPS
+from simulator import V5Simulator
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 TERMINAL_PHOENIX_THRESHOLD = 4.2
 TERMINAL_COMBINED_THRESHOLD = 0.65
@@ -44,6 +45,10 @@ class PipelineState(TypedDict):
     # Ephemeral gate
     human_resonance_confirmed: Optional[bool]
     force_save: bool
+    # v5 Simulator (optional, V5_SIMULATOR=true)
+    simulator_session_embeddings: List[Dict]   # [{cycle, emb_list, preview}]
+    simulator_refractory_clusters: List[Dict]  # [{cycle_added, phrases}]
+    simulator_trajectory_warnings: int
 
 
 def ingest_node(state: PipelineState) -> Dict:
@@ -58,9 +63,23 @@ def entropy_node(state: PipelineState) -> Dict:
     loop = state.get("refinement_loop_count", 0)
     if loop == 0:
         return {}
+
+    zeitgeist = state["zeitgeist_text"]
     signal = f"\n[ENTROPY CYCLE {loop}] Archive aged — established attractors weakened. Seek beyond."
+    zeitgeist += signal
     print(f"[NODE: ENTROPY] Archive decay signal injected (loop {loop})")
-    return {"zeitgeist_text": state["zeitgeist_text"] + signal}
+
+    if os.getenv("V5_SIMULATOR", "false").lower() == "true":
+        sim_ctx = V5Simulator.build_context(
+            state.get("simulator_session_embeddings", []),
+            state.get("simulator_refractory_clusters", []),
+            loop,
+        )
+        if sim_ctx:
+            zeitgeist += "\n\n" + sim_ctx
+            print(f"[NODE: ENTROPY] v5 simulator context injected")
+
+    return {"zeitgeist_text": zeitgeist}
 
 
 def mutate_node(state: PipelineState) -> Dict:
@@ -171,7 +190,7 @@ def refine_node(state: PipelineState) -> Dict:
                 "the opposite of what you just produced."
             )
 
-    return {
+    updates: Dict = {
         "concept_score": composite,
         "concept_scores_history": history,
         "improvement_context": improvement_ctx,
@@ -184,6 +203,23 @@ def refine_node(state: PipelineState) -> Dict:
         "prev_top_candidate_emb": current_emb_list,
         "goodhart_warnings": goodhart_warnings,
     }
+
+    if os.getenv("V5_SIMULATOR", "false").lower() == "true":
+        new_session, new_refractory, new_warnings = V5Simulator.update_session(
+            state.get("simulator_session_embeddings", []),
+            state.get("simulator_refractory_clusters", []),
+            state.get("simulator_trajectory_warnings", 0),
+            loop_num,
+            current_emb,
+            state["top_candidate"],
+        )
+        updates["simulator_session_embeddings"] = new_session
+        updates["simulator_refractory_clusters"] = new_refractory
+        updates["simulator_trajectory_warnings"] = new_warnings
+        if new_warnings > state.get("simulator_trajectory_warnings", 0):
+            print(f"[SIM] Trajectory convergence detected (warning #{new_warnings})")
+
+    return updates
 
 
 def ephemeral_gate_node(state: PipelineState) -> Dict:
@@ -250,6 +286,15 @@ def save_node(state: PipelineState) -> Dict:
         "anti_optimization_score": state.get("anti_optimization_score", 0.0),
         "goodhart_warnings": state.get("goodhart_warnings", 0),
     }
+
+    if os.getenv("V5_SIMULATOR", "false").lower() == "true":
+        loop_count = state.get("refinement_loop_count", 0)
+        output["simulator"] = V5Simulator.metrics(
+            state.get("simulator_session_embeddings", []),
+            state.get("simulator_refractory_clusters", []),
+            state.get("simulator_trajectory_warnings", 0),
+            loop_count,
+        )
     fpath = f"logs/runs/full_run_{state['run_id']}.json"
     with open(fpath, "w") as f:
         json.dump(output, f, indent=2)
@@ -262,10 +307,102 @@ def save_node(state: PipelineState) -> Dict:
         and state.get("human_resonance_confirmed") is not False
         and final_concept
     ):
-        engine = NoveltySearchEngine()
-        engine.write_terminal_archive(final_concept, best_score, best_combined, state["run_id"])
+        write_terminal_archive(final_concept, best_score, best_combined, state["run_id"])
+
+    # Emit audit record conforming to truthlens-audit-schema-v1.json
+    _write_audit_record(state, best_score, extended_verdict)
 
     return {}
+
+
+_PIPELINE_KNOWN_LIMITS = [
+    "Novelty scores are embedding-distance proxies, not ground-truth novelty measures",
+    "Cultural simulation agents are stylised archetypes, not demographically validated populations",
+    "Zeitgeist context is API-retrieved and may be stale, biased, or adversarially contaminated",
+    "Phoenix rubric weights are heuristic — not derived from empirical outcome data",
+    "Sandbox verdicts are simulations — real adoption patterns will differ",
+]
+
+
+def _write_audit_record(state: PipelineState, best_score: float, verdict: str) -> None:
+    """
+    Write a schema-conformant audit record to logs/audit/.
+    Hard-fails with a logged error if validation fails — does NOT suppress.
+    """
+    import sys
+    try:
+        import subprocess
+        now = datetime.now(timezone.utc).isoformat()
+        audit_record = {
+            "protocol": {
+                "constitution_version": "1.0",
+                "audit_schema_version": "1",
+                "signals_registry_version": "1.0",
+            },
+            "article": {
+                "url": f"urn:pipeline:run:{state['run_id']}",
+                "title": f"Pipeline run — domain: {state['domain']}",
+                "timestamp": now,
+            },
+            "signals": [
+                {
+                    "id": "ritual_cost",
+                    "score": state.get("ritual_cost_score", 0.0),
+                    "label": "Ritual Cost Signal",
+                },
+                {
+                    "id": "anti_optimization",
+                    "score": state.get("anti_optimization_score", 0.0),
+                    "label": "Anti-Optimization Signal",
+                },
+            ],
+            "interpretation": {
+                "layer1": verdict,
+            },
+            "known_limits": _PIPELINE_KNOWN_LIMITS,
+            "exported_at": now,
+        }
+
+        audit_dir = Path("logs/audit")
+        audit_dir.mkdir(parents=True, exist_ok=True)
+        audit_path = audit_dir / f"audit_{state['run_id']}.json"
+
+        # Validate against schema using Node.js AJV (if available)
+        schema_path = Path("truthlens/truthlens-audit-schema-v1.json")
+        audit_json = json.dumps(audit_record, indent=2)
+
+        if schema_path.exists():
+            result = subprocess.run(
+                [sys.executable, "-c",
+                 f"""
+import json, sys
+record = {json.dumps(audit_record)}
+# Basic required-fields check (AJV runs in Node CI)
+required = {{'protocol', 'article', 'signals', 'interpretation', 'known_limits', 'exported_at'}}
+missing = required - set(record.keys())
+if missing:
+    print(f'AUDIT VALIDATION FAIL: missing fields: {{missing}}', file=sys.stderr)
+    sys.exit(1)
+if not record.get('known_limits'):
+    print('AUDIT VALIDATION FAIL: known_limits empty', file=sys.stderr)
+    sys.exit(1)
+if record.get('interpretation', {{}}).get('layer1') is None:
+    print('AUDIT VALIDATION FAIL: interpretation.layer1 missing', file=sys.stderr)
+    sys.exit(1)
+print('Audit record valid')
+"""],
+                capture_output=True, text=True
+            )
+            if result.returncode != 0:
+                print(f"[AUDIT] Schema validation FAILED: {result.stderr.strip()}", file=sys.stderr)
+                return
+
+        with open(audit_path, "w") as f:
+            f.write(audit_json)
+        print(f"[AUDIT] Record written → {audit_path}")
+
+    except Exception as e:
+        print(f"[AUDIT] Failed to write audit record: {e}", file=sys.stderr)
 
 
 def build_pipeline():
@@ -317,12 +454,18 @@ def run(domain: str, seeds: List[str]) -> Dict:
         "goodhart_warnings": 0,
         "human_resonance_confirmed": None,
         "force_save": False,
+        "simulator_session_embeddings": [],
+        "simulator_refractory_clusters": [],
+        "simulator_trajectory_warnings": 0,
     }
 
+    sim_active = os.getenv("V5_SIMULATOR", "false").lower() == "true"
     print(f"\n{'='*60}")
     print(f"  UNIVERSAL EXTRAPOLATIVE ENGINE v4 — RUN {run_id}")
     print(f"  Domain: {domain.upper()} | Seeds: {len(seeds)}")
     print(f"  Max refinement loops: {MAX_IMPROVEMENT_LOOPS} | Plateau delta: {PLATEAU_DELTA}")
+    if sim_active:
+        print(f"  [V5 SIMULATOR ACTIVE] decay={V5Simulator.DECAY_RATE} refractory={V5Simulator.REFRACTORY_CYCLES}cyc")
     print(f"{'='*60}")
 
     final_state = pipeline.invoke(initial_state)

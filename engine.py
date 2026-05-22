@@ -8,10 +8,10 @@ import anthropic as _anthropic
 from anthropic._exceptions import OverloadedError as _OverloadedError
 from typing import List, Dict, Any, Optional, Set
 from sentence_transformers import SentenceTransformer
-from anthropic import Anthropic
 from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
+from security.firewall import LlamaFirewallClient
 
 load_dotenv()
 
@@ -57,7 +57,7 @@ def _call_with_retry(client, max_retries: int = 8, base_delay: float = 5.0, **kw
 class NoveltySearchEngine:
     def __init__(self):
         self.model = SentenceTransformer(os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2"))
-        self.client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+        self.client = LlamaFirewallClient()
         self.threshold = float(os.getenv("NOVELTY_THRESHOLD", 0.68))
         self.max_archive = int(os.getenv("ARCHIVE_MAX", 500))
         self.archive: List[Dict[str, Any]] = []

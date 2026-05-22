@@ -1,0 +1,68 @@
+# Per-node tool allowlists for the TruthLens pipeline.
+# Enforced by security/governance/node_identity.py at runtime
+# and by ci/policies/constitutional.rego in CI.
+
+nodes:
+  signals:
+    may_call_llm: false
+    may_call_network: false
+    permitted_imports:
+      - re
+      - math
+      - dataclasses
+      - typing
+    # signals.py is the deterministic layer — immutable, no external dependencies
+
+  ingest:
+    may_call_llm: false
+    may_call_network: true
+    permitted_imports:
+      - zeitgeist
+      - security.gateway
+    # Network only via gateway (Tavily search)
+
+  entropy:
+    may_call_llm: false
+    may_call_network: false
+    permitted_imports:
+      - typing
+    # Pure string concatenation — no external calls
+
+  mutate:
+    may_call_llm: true
+    may_call_network: false
+    permitted_imports:
+      - engine
+      - security.firewall
+    # LLM calls must go through LlamaFirewallClient
+
+  sandbox:
+    may_call_llm: false
+    may_call_network: false
+    permitted_imports:
+      - sandbox
+    # Pure simulation — deterministic, no external calls
+
+  refine:
+    may_call_llm: true
+    may_call_network: false
+    permitted_imports:
+      - concept_rater
+      - engine
+      - security.firewall
+    # LLM calls must go through LlamaFirewallClient
+
+  save:
+    may_call_llm: false
+    may_call_network: false
+    permitted_imports:
+      - json
+      - pathlib
+      - datetime
+      - engine
+    # File I/O only — no external calls, no LLM
+
+# Enforcement:
+# - CI: ci/policies/constitutional.rego validates import graph against this allowlist
+# - Runtime: security/governance/node_identity.py enforces at call time
+# - Strict mode: STRICT_NODE_GOVERNANCE=true raises RuntimeError on violation

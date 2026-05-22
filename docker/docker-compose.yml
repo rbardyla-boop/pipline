@@ -1,0 +1,92 @@
+# TruthLens Pipeline — Production Compose Stack
+#
+# Services:
+#   gateway   — AgentGateway proxy (holds real API credentials)
+#   pipeline  — Hardened pipeline container (no direct credential access)
+#
+# Isolation model:
+#   - pipeline has no API keys in environment
+#   - pipeline network access: only to `gateway` service (internal Docker network)
+#   - gateway has no internet except to api.anthropic.com and api.tavily.com
+#   - both containers run as non-root
+#   - pipeline rootfs is read-only
+
+version: "3.9"
+
+networks:
+  internal:
+    driver: bridge
+    internal: true      # No external internet access from this network
+  gateway-egress:
+    driver: bridge      # Gateway uses this for external API calls
+
+services:
+  # ── AgentGateway ─────────────────────────────────────────────────────────────
+  gateway:
+    image: ghcr.io/agentgateway/agentgateway:latest
+    container_name: pipeline-gateway
+    restart: unless-stopped
+    networks:
+      - internal
+      - gateway-egress
+    volumes:
+      - ./security/gateway/gateway_config.yaml:/etc/agentgateway/config.yaml:ro
+      - ./logs/audit:/logs/audit
+    environment:
+      # Real credentials are injected here — ONLY in gateway, never in pipeline
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
+      TAVILY_API_KEY: ${TAVILY_API_KEY}
+    ports:
+      - "127.0.0.1:8080:8080"  # Localhost only — not exposed to external network
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    # Gateway security: non-root (if image supports it), no privilege escalation
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    tmpfs:
+      - /tmp
+
+  # ── Pipeline ─────────────────────────────────────────────────────────────────
+  pipeline:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: pipeline-run
+    networks:
+      - internal  # Only internal network — can only reach gateway, not internet
+    depends_on:
+      gateway:
+        condition: service_healthy
+    environment:
+      # No real credentials — pipeline only knows the gateway URL
+      GATEWAY_URL: http://gateway:8080
+      ANTHROPIC_API_KEY: ""
+      TAVILY_API_KEY: ""
+      NOVELTY_THRESHOLD: ${NOVELTY_THRESHOLD:-0.68}
+      ARCHIVE_MAX: ${ARCHIVE_MAX:-500}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-all-MiniLM-L6-v2}
+      STRICT_NODE_GOVERNANCE: "true"
+    volumes:
+      - ./logs:/app/logs             # Persist audit logs and run results
+    tmpfs:
+      - /tmp:size=128m,uid=65534     # Writable /tmp for runtime artifacts
+    read_only: true                   # Root filesystem is read-only
+    security_opt:
+      - no-new-privileges:true
+      - seccomp:../agent_sandbox/container/seccomp.json
+    cap_drop:
+      - ALL                          # Drop all Linux capabilities
+    user: "65534:65534"              # Run as nobody:nogroup
+    # Resource limits
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1024M
+        reservations:
+          memory: 256M
+    # No external ports — pipeline is a batch process, not a server

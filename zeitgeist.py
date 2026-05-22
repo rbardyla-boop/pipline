@@ -5,14 +5,9 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
 from dotenv import load_dotenv
+from security.gateway import get_gateway_tavily_client
 
 load_dotenv()
-
-try:
-    from tavily import TavilyClient
-    TAVILY_AVAILABLE = True
-except ImportError:
-    TAVILY_AVAILABLE = False
 
 FALLBACK_SIGNALS = [
     "2026 geopolitical oil price shock energy anxiety blackout",
@@ -29,7 +24,7 @@ CACHE_TTL_HOURS = 6
 class ZeitgeistInjector:
     def __init__(self):
         self.model = SentenceTransformer(os.getenv("EMBEDDING_MODEL", "all-MiniLM-L6-v2"))
-        self.api_key = os.getenv("TAVILY_API_KEY")
+        self._tavily = get_gateway_tavily_client()
         Path("logs").mkdir(exist_ok=True)
 
     def _load_cache(self) -> dict | None:
@@ -53,24 +48,26 @@ class ZeitgeistInjector:
             print(f"[ZEITGEIST] Using cached signals (TTL={CACHE_TTL_HOURS}h)")
             return cached["raw_text"]
 
-        if TAVILY_AVAILABLE and self.api_key and self.api_key != "your_key_here":
+        api_key = os.getenv("TAVILY_API_KEY", "")
+        if api_key and api_key != "your_key_here":
             queries = [
                 f"2026 cultural anxiety trends {domain}",
                 "generational zeitgeist creative economy 2026",
                 "attention economy slop fatigue authentic hit creation 2026"
             ]
-            client = TavilyClient(api_key=self.api_key)
             snippets = []
             for q in queries:
                 try:
-                    result = client.search(q, max_results=3)
+                    result = self._tavily.search(q, max_results=3)
                     for r in result.get("results", []):
-                        snippets.append(r.get("content", "")[:300])
+                        content = r.get("content", "")
+                        if not content.startswith("[BLOCKED"):
+                            snippets.append(content[:300])
                 except Exception as e:
-                    print(f"[ZEITGEIST] Tavily error: {e}")
+                    print(f"[ZEITGEIST] Search error: {e}")
             raw_text = " ".join(snippets) if snippets else " ".join(FALLBACK_SIGNALS)
         else:
-            print("[ZEITGEIST] No Tavily key — using calibrated fallback signals.")
+            print("[ZEITGEIST] No API key — using calibrated fallback signals.")
             raw_text = " ".join(FALLBACK_SIGNALS)
 
         self._save_cache({"domain": domain, "raw_text": raw_text})

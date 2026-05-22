@@ -1,6 +1,46 @@
+# Python
 .venv/
 __pycache__/
 *.pyc
+*.pyo
+*.pyd
+
+# Environment / credentials — NEVER commit
 .env
+.env.*
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Pipeline logs (contain run data, not committed)
 logs/runs/*.json
 logs/zeitgeist_cache.json
+logs/audit/*.json
+
+# Security scan outputs
+logs/trivy-results.json
+logs/trivy-*.json
+logs/bandit-results.json
+logs/promptfoo-results.json
+logs/framing-results.json
+
+# Node.js
+agent_sandbox/node_modules/
+agent_sandbox/dist/
+
+# OPA cache
+*.rego.cache
+.cache/trivy/
+
+# Docker build artifacts
+docker/*.digest
+
+# Dagger
+.dagger/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

@@ -1,0 +1,12 @@
+# Security dependencies for TruthLens Pipeline
+# Installed separately to make security-layer upgrades explicit
+
+# LlamaFirewall — prompt injection detection (Meta)
+# Install if available; security/firewall/ falls back to rule-based if absent
+# llamafirewall>=0.1.0  # Uncomment when package is stable on PyPI
+
+# Static security analysis (used by CI bandit scan)
+bandit[toml]>=1.7.9
+
+# For Python-based schema validation fallback
+jsonschema>=4.23.0
