@@ -40,6 +40,7 @@ class _ResearchMemory(MemorySystem):
     def __init__(self, novelty_threshold: float = 0.30) -> None:
         self._archive: list[dict] = []
         self._threshold = novelty_threshold
+        self._session_embeddings: list[list[float]] = []
 
     def seed(self, items: list[str]) -> None:
         self._archive = [{"concept": item} for item in items]
@@ -51,6 +52,7 @@ class _ResearchMemory(MemorySystem):
         novelty: float,
         generation: int,
     ) -> None:
+        self._session_embeddings.append(list(embedding))
         if novelty > self._threshold:
             self._archive.append({
                 "concept": item,
@@ -80,7 +82,7 @@ class _ResearchMemory(MemorySystem):
     def session_snapshot(self) -> dict:
         return {
             "archive_size": len(self._archive),
-            "session_embeddings": [],
+            "session_embeddings": self._session_embeddings,
             "refractory_clusters": [],
         }
 

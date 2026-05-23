@@ -60,6 +60,8 @@ class ArchiveMemory(MemorySystem):
                 "novelty": novelty,
             })
             self._engine.prune_archive()
+        # Always track session trajectory regardless of novelty gate
+        self.update_v5_session(item, embedding)
 
     def novelty_of(self, embedding: Sequence[float]) -> float:
         return self._engine.novelty_score(np.array(embedding))

@@ -72,7 +72,12 @@ class ExperimentRunner:
         )
         for cycle_record in result.cycle_records:
             session_snap = defn.memory.session_snapshot()
-            recorder.record(cycle_record, session_snap)
+            novelty_val = cycle_record.metadata.get("novelty")
+            recorder.record(
+                cycle_record,
+                session_snap,
+                novelty_scores=[novelty_val] if novelty_val is not None else None,
+            )
 
         completed_at = datetime.now(timezone.utc).isoformat()
 

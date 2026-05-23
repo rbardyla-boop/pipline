@@ -207,7 +207,7 @@ class SimulationKernel:
                 goodhart_warning=vresult.goodhart_warning,
                 verdict=vresult.verdict,
                 duration_ms=round(duration_ms, 1),
-                metadata={"improvement_context": vresult.improvement_context},
+                metadata={"improvement_context": vresult.improvement_context, "novelty": novelty},
             ))
 
             # ---- PLAN (routing decision) ----
