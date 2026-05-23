@@ -1,0 +1,57 @@
+hypothesis_id: template_complexity
+question: Does template_count affect the diversity and quality of generated concepts?
+predicted_outcome: >
+  More production templates (higher template_count) should increase lexical
+  diversity and produce higher composite scores, because a larger pool reduces
+  repetition and allows the architecture to explore more of the concept space.
+  We expect a non-linear relationship: 4-6 templates may outperform 8 if
+  coherence degrades at high template counts.
+domain: gaming
+seeds:
+  - a mystery game where memory works backwards
+  - a survival game where sacrifice is the economy
+  - a horror game with procedurally generated grief
+max_cycles: 3
+stopping_criterion: max_iterations
+target_score: 4.3
+verification_mode: heuristic
+variants:
+  - variant_id: iter1_v1
+    description: minimal pool — 2 templates, no context injection
+    arch_type: parametric
+    params:
+      template_count: 2
+      context_injection: false
+      coherence_mode: slot_ratio
+      embed_strategy: hash
+      seed: 42
+
+  - variant_id: iter1_v2
+    description: mid-range — 4 templates, no context injection
+    arch_type: parametric
+    params:
+      template_count: 4
+      context_injection: false
+      coherence_mode: slot_ratio
+      embed_strategy: hash
+      seed: 42
+
+  - variant_id: iter1_v3
+    description: full pool — 8 templates, no context injection
+    arch_type: parametric
+    params:
+      template_count: 8
+      context_injection: false
+      coherence_mode: slot_ratio
+      embed_strategy: hash
+      seed: 42
+
+  - variant_id: iter1_v4
+    description: full pool + context injection (control)
+    arch_type: parametric
+    params:
+      template_count: 8
+      context_injection: true
+      coherence_mode: slot_ratio
+      embed_strategy: hash
+      seed: 42

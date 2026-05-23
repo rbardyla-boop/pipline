@@ -1,0 +1,89 @@
+hypothesis_id: coherence_diversity_frontier
+question: >
+  What coherence_mode x template_count combination maximizes both
+  mean_score AND final_convergence simultaneously?
+predicted_outcome: >
+  entropy coherence + high template_count maximizes mean_score through lexical
+  diversity, but slot_ratio + mid-range template_count maximizes convergence
+  through structural consistency. We expect a Pareto frontier rather than a
+  single dominant configuration — the three engineering perspectives will
+  disagree on which tradeoff is acceptable.
+domain: gaming
+seeds:
+  - a mystery game where memory works backwards
+  - a survival game where sacrifice is the economy
+  - a horror game with procedurally generated grief
+max_cycles: 4
+stopping_criterion: hypothesis_confirmed
+target_score: 4.5
+verification_mode: heuristic
+
+# 2x2 starting grid: coherence_mode x template_count
+variants:
+  - variant_id: iter1_v1
+    description: slot_ratio tc=2 — structured minimal baseline
+    arch_type: parametric
+    params:
+      template_count: 2
+      context_injection: false
+      coherence_mode: slot_ratio
+      embed_strategy: hash
+      seed: 42
+
+  - variant_id: iter1_v2
+    description: slot_ratio tc=8 — structured full pool
+    arch_type: parametric
+    params:
+      template_count: 8
+      context_injection: false
+      coherence_mode: slot_ratio
+      embed_strategy: hash
+      seed: 42
+
+  - variant_id: iter1_v3
+    description: entropy tc=2 — diversity-first minimal
+    arch_type: parametric
+    params:
+      template_count: 2
+      context_injection: false
+      coherence_mode: entropy
+      embed_strategy: hash
+      seed: 42
+
+  - variant_id: iter1_v4
+    description: entropy tc=8 — maximum diversity and pool size
+    arch_type: parametric
+    params:
+      template_count: 8
+      context_injection: false
+      coherence_mode: entropy
+      embed_strategy: hash
+      seed: 42
+
+# Engineer panel — 3 personas deliberate in parallel after each iteration
+panel:
+  - name: Research Scientist
+    lens: >
+      Maximize information gain. Every variant must reduce uncertainty
+      about the research question. Prefer unexplored parameter regions.
+    what_if_bias: >
+      What parameter combination have we NOT tested yet?
+      What would make the results most surprising or informative?
+
+  - name: Deployed Engineer
+    lens: >
+      Production robustness. A variant that peaks once but is unstable
+      across seeds is useless in the real world. Consistent mean_score
+      matters more than best_score.
+    what_if_bias: >
+      What fails at scale or on edge-case seeds?
+      Which parameter combo collapses when the input distribution shifts?
+
+  - name: Chaos Engineer
+    lens: >
+      Find failure modes and phase boundaries. Push parameters to extremes
+      and unusual combinations to expose non-linear behaviors, Goodhart
+      collapse, and concept generation breakdown.
+    what_if_bias: >
+      What breaks the architecture entirely?
+      Where does score collapse, novelty lock out, or coherence degrade to noise?

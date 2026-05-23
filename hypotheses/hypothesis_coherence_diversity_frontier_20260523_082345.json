@@ -1,0 +1,123 @@
+{
+  "hypothesis_id": "coherence_diversity_frontier",
+  "question": "What coherence_mode x template_count combination maximizes both mean_score AND final_convergence simultaneously?\n",
+  "predicted_outcome": "entropy coherence + high template_count maximizes mean_score through lexical diversity, but slot_ratio + mid-range template_count maximizes convergence through structural consistency. We expect a Pareto frontier rather than a single dominant configuration \u2014 the three engineering perspectives will disagree on which tradeoff is acceptable.\n",
+  "domain": "gaming",
+  "seeds": [
+    "a mystery game where memory works backwards",
+    "a survival game where sacrifice is the economy",
+    "a horror game with procedurally generated grief"
+  ],
+  "variants": [
+    {
+      "variant_id": "iter1_v1",
+      "description": "slot_ratio tc=2 \u2014 structured minimal baseline",
+      "arch_type": "parametric",
+      "params": {
+        "template_count": 2,
+        "context_injection": false,
+        "coherence_mode": "slot_ratio",
+        "embed_strategy": "hash",
+        "seed": 42
+      }
+    },
+    {
+      "variant_id": "iter1_v2",
+      "description": "slot_ratio tc=8 \u2014 structured full pool",
+      "arch_type": "parametric",
+      "params": {
+        "template_count": 8,
+        "context_injection": false,
+        "coherence_mode": "slot_ratio",
+        "embed_strategy": "hash",
+        "seed": 42
+      }
+    },
+    {
+      "variant_id": "iter1_v3",
+      "description": "entropy tc=2 \u2014 diversity-first minimal",
+      "arch_type": "parametric",
+      "params": {
+        "template_count": 2,
+        "context_injection": false,
+        "coherence_mode": "entropy",
+        "embed_strategy": "hash",
+        "seed": 42
+      }
+    },
+    {
+      "variant_id": "iter1_v4",
+      "description": "entropy tc=8 \u2014 maximum diversity and pool size",
+      "arch_type": "parametric",
+      "params": {
+        "template_count": 8,
+        "context_injection": false,
+        "coherence_mode": "entropy",
+        "embed_strategy": "hash",
+        "seed": 42
+      }
+    }
+  ],
+  "max_cycles": 4,
+  "stopping_criterion": "hypothesis_confirmed",
+  "target_score": 4.5,
+  "verification_mode": "heuristic",
+  "iteration": 1,
+  "iteration_summaries": [
+    [
+      {
+        "variant_id": "iter1_v1",
+        "architecture_id": "iter1_v1",
+        "best_score": 4.73,
+        "mean_score": 3.965,
+        "final_convergence": 1.0,
+        "trajectory_drift": 0.0,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The cascade of post-optimization anxiety: a entropic system where coherence stabilizes."
+      },
+      {
+        "variant_id": "iter1_v2",
+        "architecture_id": "iter1_v2",
+        "best_score": 4.59,
+        "mean_score": 3.9375,
+        "final_convergence": 1.0,
+        "trajectory_drift": 0.0,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "post-optimization anxiety as a entropic cascade: the coherence stabilizes."
+      },
+      {
+        "variant_id": "iter1_v3",
+        "architecture_id": "iter1_v3",
+        "best_score": 4.73,
+        "mean_score": 3.965,
+        "final_convergence": 1.0,
+        "trajectory_drift": 0.0,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The cascade of post-optimization anxiety: a entropic system where coherence stabilizes."
+      },
+      {
+        "variant_id": "iter1_v4",
+        "architecture_id": "iter1_v4",
+        "best_score": 4.59,
+        "mean_score": 3.9375,
+        "final_convergence": 1.0,
+        "trajectory_drift": 0.0,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "post-optimization anxiety as a entropic cascade: the coherence stabilizes."
+      }
+    ]
+  ],
+  "findings": [
+    "Iter 1: iter1_v1=4.73, iter1_v3=4.73, iter1_v2=4.59, iter1_v4=4.59. Winner: iter1_v1. Best score this iteration: 4.73."
+  ],
+  "resolved": false,
+  "resolution": ""
+}

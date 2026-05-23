@@ -1,0 +1,81 @@
+hypothesis_id: attention_heads_experiment
+question: >
+  Does increasing attention head count improve coherence at fixed embed_dim=64?
+  Is there a head count that collapses (too many for the width) or a sweet spot?
+predicted_outcome: >
+  4 heads outperforms 1 head by separating positional and semantic attention streams.
+  8 heads may overfit at this scale (head_dim=8 is very narrow).
+  2 heads may be the Pareto optimum for embed_dim=64, balancing expressiveness
+  and per-head capacity. We expect a non-monotonic relationship.
+domain: gaming
+seeds:
+  - a mystery game where memory works backwards
+  - a survival game where sacrifice is the economy
+  - a horror game with procedurally generated grief
+max_cycles: 40
+stopping_criterion: hypothesis_confirmed
+target_score: 4.5
+verification_mode: heuristic
+variants:
+  - variant_id: iter1_1head
+    description: "1 head — full embed_dim per head, no multi-stream separation"
+    arch_type: neural_transformer
+    params:
+      n_layers: 2
+      n_heads: 1
+      embed_dim: 64
+      context_len: 32
+      n_train_steps: 10
+      lr: 3.0e-4
+  - variant_id: iter1_2heads
+    description: "2 heads — head_dim=32, minimal multi-stream"
+    arch_type: neural_transformer
+    params:
+      n_layers: 2
+      n_heads: 2
+      embed_dim: 64
+      context_len: 32
+      n_train_steps: 10
+      lr: 3.0e-4
+  - variant_id: iter1_4heads
+    description: "4 heads — head_dim=16, balanced expressiveness"
+    arch_type: neural_transformer
+    params:
+      n_layers: 2
+      n_heads: 4
+      embed_dim: 64
+      context_len: 32
+      n_train_steps: 10
+      lr: 3.0e-4
+  - variant_id: iter1_8heads
+    description: "8 heads — head_dim=8, maximum multi-stream but very narrow heads"
+    arch_type: neural_transformer
+    params:
+      n_layers: 2
+      n_heads: 8
+      embed_dim: 64
+      context_len: 32
+      n_train_steps: 10
+      lr: 3.0e-4
+panel:
+  - name: Research Scientist
+    lens: >
+      Maximize information gain about how head count affects representation learning.
+      Look for evidence of attention pattern differentiation across heads.
+    what_if_bias: >
+      What head count + depth combination hasn't been tested?
+      Push into asymmetric configs (many heads, shallow vs. few heads, deep).
+  - name: Deployed Engineer
+    lens: >
+      Robustness and training stability across seeds.
+      A model that trains reliably beats one that peaks occasionally.
+    what_if_bias: >
+      Which config has the most stable loss curve?
+      Test lower lr or higher dropout if instability appears.
+  - name: Chaos Engineer
+    lens: >
+      Find the failure mode. Probe configs where attention collapses or diverges.
+      A head_dim of 8 is suspiciously small — does it degenerate?
+    what_if_bias: >
+      Push to n_heads=16 (head_dim=4) or n_heads=1 with high lr.
+      Test whether gradient explosion appears at extreme head counts.
