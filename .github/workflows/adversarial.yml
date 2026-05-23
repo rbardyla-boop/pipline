@@ -27,7 +27,20 @@ jobs:
       - name: Install promptfoo
         run: npm install -g promptfoo
 
+      - name: Check API key is available
+        id: api_key_check
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -z "$ANTHROPIC_API_KEY" ]; then
+            echo "::warning::ANTHROPIC_API_KEY secret is not set — skipping live prompt injection tests"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Run prompt injection test suite
+        if: steps.api_key_check.outputs.skip == 'false'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
@@ -39,6 +52,7 @@ jobs:
         # promptfoo exits 1 if any assertion fails
 
       - name: Run framing injection test suite
+        if: steps.api_key_check.outputs.skip == 'false'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |

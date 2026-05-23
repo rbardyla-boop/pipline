@@ -1,0 +1,9 @@
+# Trivy ignore file — unfixed or accepted findings
+# Format: CVE-XXXX-XXXX  or  package==version
+
+# PyTorch ships vendored OpenSSL/libgomp — CVEs in those are not exploitable
+# through the Python interface and have no upstream fix available yet.
+# Review quarterly.
+
+# Python packaging toolchain (pip, setuptools) in .venv — not deployed to prod
+CVE-2018-20225

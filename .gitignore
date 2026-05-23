@@ -28,6 +28,7 @@ logs/framing-results.json
 # Node.js
 agent_sandbox/node_modules/
 agent_sandbox/dist/
+truthlens/node_modules/
 
 # OPA cache
 *.rego.cache
