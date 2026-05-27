@@ -82,7 +82,7 @@ class _ResearchMemory(MemorySystem):
     def session_snapshot(self) -> dict:
         return {
             "archive_size": len(self._archive),
-            "session_embeddings": self._session_embeddings,
+            "session_embeddings": list(self._session_embeddings),
             "refractory_clusters": [],
         }
 
@@ -314,7 +314,7 @@ class ControlledTrialRunner:
                 best_score=float(sr.get("best_score", 0.0)),
                 mean_score=float(ds.get("mean_score", 0.0)),
                 final_convergence=float(ds.get("final_convergence", 0.0)),
-                trajectory_drift=float(ds.get("trajectory_warnings", 0)),
+                trajectory_drift=float(ds.get("trajectory_drift", 0.0)),
                 goodhart_total=int(ds.get("goodhart_total", 0)),
                 halt_reason=str(sr.get("halt_reason", "")),
                 total_cycles=int(sr.get("total_cycles", 0)),

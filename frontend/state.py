@@ -254,7 +254,7 @@ class BackgroundRunner:
                     "halt_reason": t.simulation_result.get("halt_reason", ""),
                     "goodhart_total": t.dynamics_summary.get("goodhart_total", 0),
                     "convergence": float(t.dynamics_summary.get("final_convergence", 0.0)),
-                    "trajectory_drift": float(t.dynamics_summary.get("trajectory_warnings", 0)),
+                    "trajectory_drift": float(t.dynamics_summary.get("trajectory_drift", 0.0)),
                 }
                 for t in traces
             ]

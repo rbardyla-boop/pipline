@@ -150,4 +150,6 @@ class DynamicsRecorder:
             "min_convergence": min(convergences),
             "goodhart_total": self._goodhart_count,
             "trajectory_warnings": self._snapshots[-1].trajectory_warnings if self._snapshots else 0,
+            "trajectory_drift": self._snapshots[-1].trajectory_drift if self._snapshots else 0.0,
+            "weighted_drift": self._snapshots[-1].weighted_drift if self._snapshots else 0.0,
         }

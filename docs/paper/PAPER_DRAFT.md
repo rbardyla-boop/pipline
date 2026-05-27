@@ -2,7 +2,7 @@
 
 **Authors:** [RB] · [Affiliation]  
 **Date:** May 2026  
-**Status:** DRAFT — neural architecture results pending; `[PENDING]` markers indicate sections to fill in after `attention_heads_experiment` completes.
+**Status:** DRAFT — Phase-10 dynamics instrumentation fix applied (see §6.4). Convergence re-measurement pending re-run of experiments. Neural architecture results pending `attention_heads_experiment` completion. `[PENDING]` markers indicate sections still requiring experimental data.
 
 ---
 
@@ -10,7 +10,7 @@
 
 We present the **Universal Agentic Framework (UAF)**, a system for scientific AI architecture discovery in which a panel of AI engineering personas acts as peer reviewers of their own architecture decisions. UAF structures architecture search as a formal scientific loop: a researcher defines a hypothesis (e.g., "does attention head count improve coherence at fixed embed_dim=64?"), the system runs controlled multi-variant trials, and a panel of three specialized AI personas — Research Scientist, Deployed Engineer, and Chaos Engineer — deliberates in parallel to propose the next iteration of variants. The loop terminates when Claude semantically confirms the hypothesis is resolved, not at a fixed iteration count.
 
-Across 351 controlled experiments spanning 37 distinct architecture configurations in the creative concept domain, UAF achieved a best composite score of **4.78/5.0**, maintained **100% convergence** across all runs [PENDING — re-measure after dynamics fix; convergence values were produced by a stub returning empty embeddings], and detected **zero Goodhart violations**. The engineer panel discovered a previously unpredicted phase boundary (score collapse at template_count=1) and surfaced a real Pareto frontier between peak performance and mean stability — findings a single-expert refinement loop missed entirely. We further show that the simulation cycle maps directly to a gradient descent step, allowing a character-level decoder-only transformer to serve as a drop-in cognition engine with zero kernel changes. UAF represents a shift from black-box hyperparameter search toward **hypothesis-confirmed, multi-perspective, auditable AI architecture science**.
+Across 351 controlled experiments spanning 37 distinct architecture configurations in the creative concept domain, UAF achieved a best composite score of **4.78/5.0** and detected **zero Goodhart violations**. Convergence dynamics are reported in §5.1 following a Phase-10 instrumentation fix (§6.4). The engineer panel discovered a previously unpredicted phase boundary (score collapse at template_count=1) and surfaced a real Pareto frontier between peak performance and mean stability — findings a single-expert refinement loop missed entirely. We further show that the simulation cycle maps directly to a gradient descent step, allowing a character-level decoder-only transformer to serve as a drop-in cognition engine with zero kernel changes. UAF represents a shift from black-box hyperparameter search toward **hypothesis-confirmed, multi-perspective, auditable AI architecture science**.
 
 ---
 
@@ -232,26 +232,28 @@ All parametric experiments run on CPU without GPU. Neural architecture experimen
 
 | Variant | Configuration | Best Score | Mean Score | Convergence | Goodhart |
 |---|---|---|---|---|---|
-| iter1_v1 | slot_ratio, tc=2 | 4.730 | 3.965 | 1.000 | 0 |
-| iter1_v2 | slot_ratio, tc=8 | 4.590 | 3.938 | 1.000 | 0 |
-| iter1_v3 | entropy, tc=2 | 4.730 | 3.965 | 1.000 | 0 |
-| iter1_v4 | entropy, tc=8 | 4.590 | 3.938 | 1.000 | 0 |
+| iter1_v1 | slot_ratio, tc=2 | 4.730 | 3.965 | — ¹ | 0 |
+| iter1_v2 | slot_ratio, tc=8 | 4.590 | 3.938 | — ¹ | 0 |
+| iter1_v3 | entropy, tc=2 | 4.730 | 3.965 | — ¹ | 0 |
+| iter1_v4 | entropy, tc=8 | 4.590 | 3.938 | — ¹ | 0 |
+
+*¹ Convergence values from pre-Phase-10 runs are stale (empty-embeddings stub produced 1.000 for all rows). Re-measurement pending; see §5.1 and §6.4.*
 
 **Iteration 2 (single-Claude refinement):**
 
 | Variant | Configuration | Best Score | Mean Score | Convergence |
 |---|---|---|---|---|
-| iter2_v1 | slot_ratio, tc=4 | 4.590 | 3.938 | 1.000 |
-| iter2_v2 | entropy, tc=4 | 4.690 | 3.990 | 1.000 |
-| iter2_v3 | entropy, tc=6 | 4.690 | 3.990 | 1.000 |
+| iter2_v1 | slot_ratio, tc=4 | 4.590 | 3.938 | — ¹ |
+| iter2_v2 | entropy, tc=4 | 4.690 | 3.990 | — ¹ |
+| iter2_v3 | entropy, tc=6 | 4.690 | 3.990 | — ¹ |
 
 **Iteration 3 (engineer panel activated):**
 
 | Variant | Proposed by | Config | Best Score | Mean Score | Convergence |
 |---|---|---|---|---|---|
-| iter3_res_v2 | Research Scientist | slot_ratio, tc=1, transformer embed | **3.350** | 3.250 | 1.000 |
-| iter3_dep_v1 | Deployed Engineer | slot_ratio, tc=4, hash embed | **4.650** | 3.720 | 1.000 |
-| iter3_cha_v2 | Chaos Engineer | entropy, tc=3 | **4.510** | 3.980 | 1.000 |
+| iter3_res_v2 | Research Scientist | slot_ratio, tc=1, transformer embed | **3.350** | 3.250 | — ¹ |
+| iter3_dep_v1 | Deployed Engineer | slot_ratio, tc=4, hash embed | **4.650** | 3.720 | — ¹ |
+| iter3_cha_v2 | Chaos Engineer | entropy, tc=3 | **4.510** | 3.980 | — ¹ |
 
 **Key panel findings (Iteration 3):**
 - **Phase boundary discovered:** slot_ratio + tc=1 collapses to 3.35 — first score below 4.4 across all experiments. The Chaos Engineer proposed this extreme; single-expert refinement would never have explored tc=1.
@@ -300,12 +302,12 @@ Across 341 gaming domain experiments:
 | Best score achieved | **4.78 / 5.0** (iter4_dep_v2) |
 | Mean best score | **4.52** |
 | Mean score (all cycles) | **3.85** |
-| Convergence success rate | **[PENDING — re-measure after dynamics fix]** (previously reported as 100% / final_convergence=1.0; artifact of empty session_embeddings stub) |
+| Convergence success rate | **[PENDING — post-Phase-10 re-run required; see §6.4]** |
 | Goodhart violations | **0** across all experiments |
 | Distinct architectures evaluated | **37** |
 | Halt reason | 96.9% max_loops_reached; 3.1% planner_halt |
 
-100% convergence is a strong result — every run fully explored its session embedding space. Zero Goodhart violations indicate the heuristic verification metric is not gameable by the parametric and symbolic architectures tested.
+Convergence metrics require a post-Phase-10 re-run; all pre-fix values are stale and excluded from this table (see §6.4 for the root cause and fix). Zero Goodhart violations indicate the heuristic verification metric is not gameable by the parametric and symbolic architectures tested.
 
 **[FIGURE 9: fig9_leaderboard.png — Architecture leaderboard: all 37+ variants ranked by best_score, showing top 10 with mean_score, convergence, and Goodhart columns]**
 
@@ -338,11 +340,11 @@ Iteration 3 produced the first multi-objective Pareto finding:
 
 Neither dominates. A system optimizing for best_score would select dep_v1; a system optimizing for reliability (mean_score) would select cha_v2. This tradeoff would not have appeared in single-expert refinement — it required the Deployed Engineer and Chaos Engineer to propose from their respective lenses simultaneously.
 
-### 5.5 Neural Architecture Results *(fill when complete)*
+### 5.5 Neural Architecture Results
 
-`[PENDING — fill in after attention_heads_experiment iter 1 completes]`
+`[PENDING — fill in after attention_heads_experiment completes; blocked on §4.4 data collection]`
 
-Expected findings based on partial data and theoretical analysis:
+This section will report convergence, trajectory_drift, and score distributions for the n_heads={1,2,4,8} variants across all iterations of the attention heads experiment. Expected findings based on partial data and theoretical analysis:
 - 2-heads predicted to be Pareto-optimal at embed_dim=64 (head_dim=32 — sufficient capacity without over-splitting)
 - 8-heads predicted to underperform due to head_dim=8 being too narrow for meaningful attention patterns
 - Chaos Engineer will discover n_heads=16 degeneration as a new phase boundary
@@ -379,7 +381,7 @@ This means any differentiable model (RNN, diffusion, fine-tuned LLM) can be inse
 
 **Heuristic verification:** All 351 experiments used the heuristic verifier (word diversity + length + structural markers). This is fast and free but may not reflect true quality. The Phoenix LLM rater (using Claude as a judge) was not used due to cost — it is the natural next step for validating whether heuristic scores correlate with human judgment.
 
-**100% convergence:** Every run achieved final_convergence=1.0. This may indicate a floor effect in the parametric and symbolic architectures — or simply that the session length (4–40 cycles) is sufficient for full exploration at these embedding dimensions. The neural architecture results will provide a more sensitive convergence test.
+**Convergence instrumentation bug (Phase-10 post-mortem):** All pre-Phase-10 runs reported `final_convergence=1.0` and `trajectory_drift=0.0` as artifacts of two compounding bugs. First, `_ResearchMemory.session_snapshot()` (`uaf/research/trial_runner.py:85`) always returned `session_embeddings: []`, causing `convergence_score([])` to return the empty-list fallback `1.0` and `trajectory_drift([])` to return `0.0`. Second, `summaries_from_traces` (`trial_runner.py:317`) read the wrong key (`"trajectory_warnings"`, an integer event counter) instead of `"trajectory_drift"` (the float cumulative path length), and `DynamicsRecorder.summary()` omitted `"trajectory_drift"` from its output entirely. Both bugs were fixed in Phase-10 (`tests/test_dynamics_real.py` provides regression coverage; 217 tests pass). The true convergence and drift distributions for the 351-experiment corpus are unknown until a post-fix re-run; convergence claims in §4.3 and §5.1 are marked pending accordingly.
 
 **Single domain:** All primary experiments used gaming concept seeds. Generalization to code, science, medicine, or long-form text is untested. The UAF is domain-agnostic by design, but verification metrics may need domain-specific tuning.
 
@@ -425,4 +427,4 @@ Future work will focus on Phoenix verification (LLM-as-judge), adversarial perso
 
 ---
 
-*[END OF DRAFT — sections 5.5 and neural arch figures pending attention_heads_experiment completion]*
+*[END OF DRAFT — Phase-10 dynamics fix applied; §4.3 convergence columns, §5.1 convergence rate, §5.5 neural results, and figures 5/8 pending attention_heads_experiment completion and post-fix re-run]*
