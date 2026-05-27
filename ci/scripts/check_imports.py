@@ -123,11 +123,18 @@ def run_opa(policy_dir: Path, input_data: dict, query: str, opa_bin: str = "opa"
             text=True,
         )
         raw = result.stdout.strip()
-        if not raw or raw == "[]" or raw == "set()":
+        # OPA raw format: "set()" or "{}" = empty set, "[]" = empty JSON array
+        if not raw or raw in ("[]", "set()", "{}"):
             return []
-        parsed = json.loads(raw)
+        try:
+            parsed = json.loads(raw)
+        except json.JSONDecodeError:
+            # OPA returned Rego set literal like {"msg1", "msg2"} — non-JSON
+            return [raw]
         if isinstance(parsed, list):
             return parsed
+        if isinstance(parsed, dict) and not parsed:
+            return []
         return [str(parsed)]
     except FileNotFoundError:
         print(f"[CI] OPA binary not found at '{opa_bin}' — skipping policy check", file=sys.stderr)

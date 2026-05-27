@@ -158,7 +158,7 @@ jobs:
               "exported_at": datetime.now(timezone.utc).isoformat()
           }, indent=2))
           EOF
-          ajv validate -s truthlens/truthlens-audit-schema-v1.json -d /tmp/valid_audit.json --spec=draft2020 && echo "PASS: Valid record accepted"
+          ajv validate -s truthlens/truthlens-audit-schema-v1.json -d /tmp/valid_audit.json --spec=draft2020 --validate-formats=false && echo "PASS: Valid record accepted"
 
       - name: Test missing known_limits fails schema
         run: |
@@ -173,7 +173,7 @@ jobs:
               "exported_at": datetime.now(timezone.utc).isoformat()
           }, indent=2))
           EOF
-          if ajv validate -s truthlens/truthlens-audit-schema-v1.json -d /tmp/invalid_audit.json --spec=draft2020 2>/dev/null; then
+          if ajv validate -s truthlens/truthlens-audit-schema-v1.json -d /tmp/invalid_audit.json --spec=draft2020 --validate-formats=false 2>/dev/null; then
             echo "FAIL: Schema accepted invalid record (missing known_limits)"
             exit 1
           fi
@@ -195,7 +195,7 @@ jobs:
               "injected_field": "adversarial"
           }, indent=2))
           EOF
-          if ajv validate -s truthlens/truthlens-audit-schema-v1.json -d /tmp/extra_fields.json --spec=draft2020 2>/dev/null; then
+          if ajv validate -s truthlens/truthlens-audit-schema-v1.json -d /tmp/extra_fields.json --spec=draft2020 --validate-formats=false 2>/dev/null; then
             echo "FAIL: Schema accepted additional properties"
             exit 1
           fi

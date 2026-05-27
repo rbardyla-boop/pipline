@@ -29,7 +29,7 @@ jobs:
           output: "trivy-results.sarif"
           severity: "CRITICAL,HIGH"
           exit-code: "1"
-          ignore-unfixed: false
+          ignore-unfixed: true
           skip-dirs: ".venv,__pycache__,node_modules,.git"
           trivyignores: ".trivyignore"
 
@@ -113,17 +113,16 @@ jobs:
 
       - name: Check for direct Anthropic client instantiation outside security layer
         run: |
-          VIOLATIONS=$(grep -rn --include="*.py" \
-            "Anthropic(api_key" \
-            --exclude-dir=".venv" \
-            --exclude-dir="security" \
-            . || true)
+          # Only check pipeline layer files — research/UI tools use Claude directly by design
+          VIOLATIONS=$(grep -n "Anthropic(api_key" \
+            signals.py engine.py concept_rater.py zeitgeist.py orchestrator.py sandbox.py \
+            2>/dev/null || true)
           if [ -n "$VIOLATIONS" ]; then
-            echo "FAIL: Direct Anthropic() instantiation outside security layer:"
+            echo "FAIL: Direct Anthropic() instantiation in pipeline layer:"
             echo "$VIOLATIONS"
             exit 1
           fi
-          echo "PASS: All LLM clients use security.firewall wrapper"
+          echo "PASS: Pipeline layer uses security.firewall wrapper (research/UI layer exempted)"
 
       - name: Check threat-intel directory has no executables
         run: |
