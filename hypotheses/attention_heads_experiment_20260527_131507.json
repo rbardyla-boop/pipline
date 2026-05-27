@@ -1,0 +1,658 @@
+{
+  "hypothesis_id": "attention_heads_experiment",
+  "question": "Does increasing attention head count improve coherence at fixed embed_dim=64? Is there a head count that collapses (too many for the width) or a sweet spot?\n",
+  "predicted_outcome": "4 heads outperforms 1 head by separating positional and semantic attention streams. 8 heads may overfit at this scale (head_dim=8 is very narrow). 2 heads may be the Pareto optimum for embed_dim=64, balancing expressiveness and per-head capacity. We expect a non-monotonic relationship.\n",
+  "domain": "gaming",
+  "seeds": [
+    "a mystery game where memory works backwards",
+    "a survival game where sacrifice is the economy",
+    "a horror game with procedurally generated grief"
+  ],
+  "variants": [
+    {
+      "variant_id": "iter5_dep_v1",
+      "description": "Entropy coherence mode with context injection enabled and transformer embed strategy - testing whether entropy-based coherence produces more stable optimization trajectory than slot_ratio, building on iter4_dep_v1 winner config",
+      "arch_type": "parametric",
+      "params": {
+        "template_count": 4,
+        "context_injection": true,
+        "coherence_mode": "entropy",
+        "embed_strategy": "transformer",
+        "seed": 42
+      }
+    },
+    {
+      "variant_id": "iter5_res_v1",
+      "description": "High template count (8) with entropy coherence mode and transformer embed strategy \u2014 tests whether maximum head-analog multiplicity collapses representation quality at this scale, probing the overfit/collapse boundary",
+      "arch_type": "parametric",
+      "params": {
+        "template_count": 8,
+        "context_injection": false,
+        "coherence_mode": "entropy",
+        "embed_strategy": "transformer",
+        "seed": 42
+      }
+    },
+    {
+      "variant_id": "iter5_res_v2",
+      "description": "Low template count (2) with slot_ratio coherence and context injection enabled \u2014 tests the Pareto optimum hypothesis where fewer, wider representational slots with full context access maximizes per-slot capacity and coherence at embed_dim=64",
+      "arch_type": "parametric",
+      "params": {
+        "template_count": 2,
+        "context_injection": true,
+        "coherence_mode": "slot_ratio",
+        "embed_strategy": "transformer",
+        "seed": 17
+      }
+    }
+  ],
+  "max_cycles": 40,
+  "stopping_criterion": "hypothesis_confirmed",
+  "target_score": 4.5,
+  "verification_mode": "heuristic",
+  "iteration": 5,
+  "iteration_summaries": [
+    [
+      {
+        "variant_id": "iter1_1head",
+        "architecture_id": "neural_L2_H1_D64_C32",
+        "best_score": 4.48,
+        "mean_score": 4.1692,
+        "final_convergence": 0.067299,
+        "trajectory_drift": 1.712686,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "C-m6!jP 9o9;u3o\"azSU'r13Nn9VA4akduL{rKhlzs-mfa\t ;T\"'a\"\u20136o[6g-eVS"
+      },
+      {
+        "variant_id": "iter1_2heads",
+        "architecture_id": "neural_L2_H2_D64_C32",
+        "best_score": 4.48,
+        "mean_score": 4.268,
+        "final_convergence": 0.083917,
+        "trajectory_drift": 1.637093,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "ernf\u2013'b e9}r[Ht  f0cmAMb[\ni.5gj}xx-QBLh r\"pz!m\u2013I2!e\u2014TT30{ yMOzij"
+      },
+      {
+        "variant_id": "iter1_4heads",
+        "architecture_id": "neural_L2_H4_D64_C32",
+        "best_score": 4.48,
+        "mean_score": 4.0885,
+        "final_convergence": 0.08645,
+        "trajectory_drift": 2.357357,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "v1Prnvzquo[{LO1eWYjeCoJcn3xnvPcNdqqis}VB4)G\u2014 Gm!mk[ttV!\tUBOzBWN;"
+      },
+      {
+        "variant_id": "iter1_8heads",
+        "architecture_id": "neural_L2_H8_D64_C32",
+        "best_score": 4.48,
+        "mean_score": 4.2685,
+        "final_convergence": 0.091503,
+        "trajectory_drift": 2.058747,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "}ts'ni x(5bd\" naPHj? Ca7fl\u2013qp.,sg[OO3lA'4gg?ms\u2013itN{\t9LDi\nltotwTR"
+      }
+    ],
+    [
+      {
+        "variant_id": "iter2_dep_v1",
+        "architecture_id": "iter2_dep_v1",
+        "best_score": 4.73,
+        "mean_score": 3.994,
+        "final_convergence": 0.701949,
+        "trajectory_drift": 26.890256,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "The cascade of post-optimization anxiety: a entropic system where coherence stabilizes."
+      },
+      {
+        "variant_id": "iter2_res_v1",
+        "architecture_id": "iter2_res_v1",
+        "best_score": 4.64,
+        "mean_score": 3.8847,
+        "final_convergence": 0.697206,
+        "trajectory_drift": 26.536001,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "The intersection of authenticity and adversarial cascade: entropy crystallizes."
+      },
+      {
+        "variant_id": "iter2_cha_v2",
+        "architecture_id": "symbolic_grammar_v1",
+        "best_score": 4.64,
+        "mean_score": 3.8847,
+        "final_convergence": 0.814595,
+        "trajectory_drift": 32.291013,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "The intersection of authenticity and adversarial cascade: entropy crystallizes."
+      }
+    ],
+    [
+      {
+        "variant_id": "iter3_dep_v1",
+        "architecture_id": "iter3_dep_v1",
+        "best_score": 4.61,
+        "mean_score": 3.6528,
+        "final_convergence": 0.689915,
+        "trajectory_drift": 26.30354,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "The substrate of authenticity: a asymmetric system where trajectory inverts."
+      },
+      {
+        "variant_id": "iter3_res_v1",
+        "architecture_id": "iter3_res_v1",
+        "best_score": 4.64,
+        "mean_score": 3.8847,
+        "final_convergence": 0.697206,
+        "trajectory_drift": 26.536001,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "The intersection of authenticity and adversarial cascade: entropy crystallizes."
+      },
+      {
+        "variant_id": "iter3_cha_v2",
+        "architecture_id": "iter3_cha_v2",
+        "best_score": 4.73,
+        "mean_score": 3.9998,
+        "final_convergence": 0.822637,
+        "trajectory_drift": 32.423354,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "The lattice of post-optimization anxiety: a synthetic system where coherence collapses."
+      }
+    ],
+    [
+      {
+        "variant_id": "iter4_dep_v1",
+        "architecture_id": "iter4_dep_v1",
+        "best_score": 4.77,
+        "mean_score": 3.7237,
+        "final_convergence": 0.728233,
+        "trajectory_drift": 27.830158,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "The fracture of post-optimization anxiety: a calibrated system where trajectory stabilizes."
+      },
+      {
+        "variant_id": "iter4_res_v2",
+        "architecture_id": "iter4_res_v2",
+        "best_score": 4.73,
+        "mean_score": 3.994,
+        "final_convergence": 0.701949,
+        "trajectory_drift": 26.890256,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "The cascade of post-optimization anxiety: a entropic system where coherence stabilizes."
+      },
+      {
+        "variant_id": "iter4_cha_v1",
+        "architecture_id": "iter4_cha_v1",
+        "best_score": 4.72,
+        "mean_score": 3.862,
+        "final_convergence": 0.724362,
+        "trajectory_drift": 28.571662,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "The intersection of authenticity scarcity and asymmetric protocol: friction fragments."
+      }
+    ],
+    [
+      {
+        "variant_id": "iter5_dep_v1",
+        "architecture_id": "iter5_dep_v1",
+        "best_score": 4.61,
+        "mean_score": 3.6528,
+        "final_convergence": 0.689915,
+        "trajectory_drift": 26.30354,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "The substrate of authenticity: a asymmetric system where trajectory inverts."
+      },
+      {
+        "variant_id": "iter5_res_v1",
+        "architecture_id": "iter5_res_v1",
+        "best_score": 4.72,
+        "mean_score": 3.862,
+        "final_convergence": 0.724362,
+        "trajectory_drift": 28.571662,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "The intersection of authenticity scarcity and asymmetric protocol: friction fragments."
+      },
+      {
+        "variant_id": "iter5_res_v2",
+        "architecture_id": "iter5_res_v2",
+        "best_score": 4.62,
+        "mean_score": 3.8458,
+        "final_convergence": 0.692381,
+        "trajectory_drift": 25.882035,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 40,
+        "best_candidate": "The threshold of authenticity: a asymmetric system where attention saturates."
+      }
+    ]
+  ],
+  "findings": [
+    "Iter 1: iter1_1head=4.48, iter1_2heads=4.48, iter1_4heads=4.48, iter1_8heads=4.48. Winner: neural_L2_H1_D64_C32. Best score this iteration: 4.48.",
+    "Iter 2: iter2_dep_v1=4.73, iter2_res_v1=4.64, iter2_cha_v2=4.64. Winner: iter2_dep_v1. Best score this iteration: 4.73.",
+    "Iter 3: iter3_cha_v2=4.73, iter3_res_v1=4.64, iter3_dep_v1=4.61. Winner: iter3_cha_v2. Best score this iteration: 4.73.",
+    "Iter 4: iter4_dep_v1=4.77, iter4_res_v2=4.73, iter4_cha_v1=4.72. Winner: iter4_dep_v1. Best score this iteration: 4.77.",
+    "Iter 5: iter5_res_v1=4.72, iter5_res_v2=4.62, iter5_dep_v1=4.61. Winner: iter5_res_v1. Best score this iteration: 4.72."
+  ],
+  "panel_proposals": [
+    [
+      {
+        "persona": "Deployed Engineer",
+        "reasoning": "All four head-count variants converged to identical best scores (4.48) with varying means, suggesting the head-count axis isn't the instability driver at this scale. The convergence variance differs (1head=0.067 vs 8heads=0.092), indicating 8heads is less stable. To probe robustness, I want to test whether entropy coherence mode stabilizes training across seeds better than the default, and whether context_injection introduces harmful variance or helpful signal at this embed_dim.",
+        "variants": [
+          {
+            "variant_id": "iter2_dep_v1",
+            "description": "Entropy coherence mode with context injection disabled, lower template count to reduce variance surface, different seed to probe cross-seed stability",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 2,
+              "context_injection": false,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter2_dep_v2",
+            "description": "Slot_ratio coherence mode with context injection enabled to test if additional signal reduces loss variance, moderate template count, different seed for stability comparison",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 4,
+              "context_injection": true,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "transformer",
+              "seed": 7
+            }
+          }
+        ],
+        "confidence": 0.38
+      },
+      {
+        "persona": "Chaos Engineer",
+        "reasoning": "All four head configs converged to identical best scores (4.48), suggesting the attention head count isn't the differentiating variable at this scale \u2014 the architecture may be hitting a ceiling imposed by other constraints like context_injection or coherence_mode. To probe actual failure modes, I want to stress-test coherence_mode='entropy' which should expose instability in narrow head_dim scenarios, and push template_count to extremes while toggling context_injection to see if gradient-like collapse appears in the symbolic space. The flat convergence landscape is suspicious and warrants perturbation of orthogonal axes.",
+        "variants": [
+          {
+            "variant_id": "iter2_cha_v1",
+            "description": "Entropy coherence mode with max templates and context injection disabled \u2014 probing whether entropy-based coherence collapses without contextual grounding, exposing latent instability the slot_ratio mode was masking",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "context_injection": false,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 666
+            }
+          },
+          {
+            "variant_id": "iter2_cha_v2",
+            "description": "Symbolic grammar arch as a chaos baseline \u2014 if parametric variants are all converging identically, switching arch_type entirely tests whether the score ceiling is a parametric architecture artifact or a fundamental evaluation floor",
+            "arch_type": "symbolic_grammar",
+            "params": {
+              "seed": 42
+            }
+          }
+        ],
+        "confidence": 0.31
+      },
+      {
+        "persona": "Research Scientist",
+        "reasoning": "Iteration 1 showed all head counts converging to identical best scores (4.48), suggesting the current parameter space isn't differentiating head count effects on representation learning. To probe asymmetric configs and break this degeneracy, I want to test context_injection=true with entropy coherence mode (which should amplify differences in attention pattern diversity across heads) alongside varying template_count to stress-test shallow vs. deep representational capacity. The flat best scores suggest we need orthogonal axes of variation \u2014 coherence_mode and context_injection \u2014 to surface any latent signal about head count interactions.",
+        "variants": [
+          {
+            "variant_id": "iter2_res_v1",
+            "description": "Asymmetric shallow-wide config: many templates with entropy coherence and context injection enabled, probing whether richer context signals unlock differentiation that head count alone couldn't provide in iter1",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "context_injection": true,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter2_res_v2",
+            "description": "Minimal-template deep-semantic config: few templates with slot_ratio coherence and no context injection, creating a capacity-constrained regime where per-slot representational pressure should reveal whether symbolic structure outperforms parametric at this embed scale",
+            "arch_type": "symbolic_grammar",
+            "params": {
+              "seed": 17
+            }
+          }
+        ],
+        "confidence": 0.32
+      }
+    ],
+    [
+      {
+        "persona": "Research Scientist",
+        "reasoning": "Iteration 1 showed identical scores across all head counts (1,2,4,8), suggesting the embed_dim=64 constraint flattened head-count effects entirely \u2014 the architecture may not be differentiating heads at all. Iteration 2's winner used depth variation rather than head manipulation. To probe asymmetric configs and maximize information gain, I want to test: (1) many templates with entropy coherence mode to push representational diversity, and (2) few templates with slot_ratio to stress-test per-slot capacity \u2014 essentially shallow-wide vs. narrow-deep analogs in the parametric space.",
+        "variants": [
+          {
+            "variant_id": "iter3_res_v1",
+            "description": "High template count (8) with entropy coherence mode and transformer embed strategy \u2014 the 'many heads, shallow' asymmetric config. Tests whether maximal template diversity with entropy regularization produces richer attention pattern differentiation at embed_dim=64.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "context_injection": true,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter3_res_v2",
+            "description": "Minimal template count (2) with slot_ratio coherence mode and transformer embed strategy \u2014 the 'few heads, deep' asymmetric config. Tests whether concentrated per-slot capacity with ratio-based coherence outperforms high-template entropy configs, probing the Pareto optimum hypothesis.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 2,
+              "context_injection": true,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "transformer",
+              "seed": 17
+            }
+          }
+        ],
+        "confidence": 0.35
+      },
+      {
+        "persona": "Chaos Engineer",
+        "reasoning": "Iteration 1 showed flat scores across all head counts (4.48 everywhere), suggesting the head count sweep didn't differentiate \u2014 the real variable may be coherence_mode and context_injection rather than heads. Iteration 2 showed iter2_dep_v1 winning with score 4.73, so I want to probe failure modes by pushing coherence_mode to 'entropy' (maximum instability) with context_injection=true to see if attention collapses under entropic pressure, and then test the degenerate case of template_count=8 (maximum fragmentation) without context injection to find where coherence diverges.",
+        "variants": [
+          {
+            "variant_id": "iter3_cha_v1",
+            "description": "Entropy coherence mode with context injection enabled and high template count \u2014 probing whether entropic pressure causes attention collapse or unexpected stabilization at the edge of degeneration.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "context_injection": true,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 1337
+            }
+          },
+          {
+            "variant_id": "iter3_cha_v2",
+            "description": "Maximum template fragmentation without context injection, using slot_ratio coherence mode \u2014 testing whether removing the stabilizing context signal causes divergence when head capacity is maximally split.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "context_injection": false,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "hash",
+              "seed": 666
+            }
+          }
+        ],
+        "confidence": 0.31
+      },
+      {
+        "persona": "Deployed Engineer",
+        "reasoning": "Iter 1 showed zero variance across head counts (all 4.48), suggesting the head count sweep wasn't the differentiating factor - the parametric architecture itself may be the lever. Iter 2's best variant (4.73) used dep_v1 config, so I want to stress-test stability by varying seed and coherence_mode to check if that score is reproducible or a lucky spike. If entropy coherence_mode drove the win, switching to slot_ratio with context_injection should reveal whether the gain is robust or seed-sensitive.",
+        "variants": [
+          {
+            "variant_id": "iter3_dep_v1",
+            "description": "Replicate iter2_dep_v1 best config with different seed to probe training stability - if score holds near 4.73 across seeds, the config is robust not lucky",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 4,
+              "context_injection": true,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter3_dep_v2",
+            "description": "Swap coherence_mode to slot_ratio with context_injection enabled to test whether entropy mode was the key driver or if slot_ratio offers comparable stability with lower variance",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 4,
+              "context_injection": true,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          }
+        ],
+        "confidence": 0.52
+      }
+    ],
+    [
+      {
+        "persona": "Deployed Engineer",
+        "reasoning": "Scores have plateaued at 4.73 across iterations 2 and 3, suggesting instability rather than genuine improvement. From a robustness lens, I want to test whether entropy coherence_mode is contributing to training instability versus length mode which is more deterministic. I'll also probe whether context_injection is adding noise at this scale, testing both with and without it to isolate the variable causing variance across seeds.",
+        "variants": [
+          {
+            "variant_id": "iter4_dep_v1",
+            "description": "Stability probe: entropy coherence_mode with context_injection disabled, testing whether injection adds destabilizing variance. Multiple templates to smooth over seed sensitivity.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 4,
+              "context_injection": false,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter4_dep_v2",
+            "description": "Robustness baseline: length coherence_mode as a more deterministic alternative to entropy, context_injection enabled, lower template count to reduce overfitting surface. Tests whether length-based coherence yields more stable loss curves.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 2,
+              "context_injection": true,
+              "coherence_mode": "length",
+              "embed_strategy": "transformer",
+              "seed": 7
+            }
+          }
+        ],
+        "confidence": 0.35
+      },
+      {
+        "persona": "Chaos Engineer",
+        "reasoning": "The iter3_cha_v2 winner used coherence_mode entropy and hit the ceiling at 4.73 \u2014 same as iter2_dep_v1. The plateau suggests we're hitting a degenerate attractor, not a true optimum. I want to stress-test whether entropy mode is robust across template counts (push to extremes: 1 and 8) and whether context_injection breaks or stabilizes the collapse boundary. If head_dim degeneracy is the analogue here, template_count=8 with embed_strategy=transformer may be the equivalent of n_heads=16 \u2014 too many slots for the width, inducing representational collapse.",
+        "variants": [
+          {
+            "variant_id": "iter4_cha_v1",
+            "description": "Stress test: maximum template_count=8 with entropy coherence and transformer embed \u2014 probing whether slot overload causes coherence collapse analogous to head_dim degeneration at high head counts",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "context_injection": false,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter4_cha_v2",
+            "description": "Minimal-slot extreme: template_count=1 with context_injection enabled and entropy mode \u2014 testing whether a single saturated template with injected context outperforms the multi-slot attractor, revealing if the sweet spot is degenerate singularity rather than distributed representation",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 1,
+              "context_injection": true,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 7
+            }
+          }
+        ],
+        "confidence": 0.31
+      },
+      {
+        "persona": "Research Scientist",
+        "reasoning": "Iteration 1 showed no differentiation across head counts (all 4.48), suggesting the head count variable may be confounded by other architectural choices. The winning configs in iterations 2-3 used coherence_mode and context_injection variations rather than head-count sweeps. To maximize information gain on asymmetric configs, I want to test shallow+many-template vs deep+few-template regimes while switching coherence_mode to 'entropy' (which directly probes representation collapse) and toggling context_injection to isolate whether positional vs semantic stream separation is actually occurring.",
+        "variants": [
+          {
+            "variant_id": "iter4_res_v1",
+            "description": "Asymmetric shallow-wide config: high template_count=8 with entropy coherence mode and context_injection=true. Tests whether many parallel representational slots with entropy-based coherence measurement reveals the predicted collapse at narrow head_dim, analogous to 8-head overfit hypothesis.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "context_injection": true,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter4_res_v2",
+            "description": "Asymmetric deep-narrow config: low template_count=2 with slot_ratio coherence mode and context_injection=false. Tests the few-heads-deep regime to see if reduced slot count with slot_ratio measurement captures the Pareto optimum hypothesis for embed_dim=64 without context bleed.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 2,
+              "context_injection": false,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          }
+        ],
+        "confidence": 0.42
+      }
+    ],
+    [
+      {
+        "persona": "Chaos Engineer",
+        "reasoning": "The head_dim degeneration hypothesis hasn't been stress-tested yet \u2014 iter1 showed flat scores across head counts suggesting the scoring function may be insensitive to architectural width, but entropy-based coherence mode might expose collapse behavior differently. Pushing to extreme configurations: maximum template_count with entropy coherence to probe whether gradient-equivalent saturation appears, versus minimal template_count with context_injection disabled to find the degenerate floor. If scores stay flat, the architecture is robust to head-count chaos; if entropy mode diverges, we've found the failure boundary.",
+        "variants": [
+          {
+            "variant_id": "iter5_cha_v1",
+            "description": "Maximum template_count=8 with entropy coherence mode and transformer embed \u2014 probing whether high slot count causes attention collapse or saturation at embed_dim=64 equivalent width",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "context_injection": true,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 666
+            }
+          },
+          {
+            "variant_id": "iter5_cha_v2",
+            "description": "Minimal template_count=1 with context_injection=false and entropy coherence \u2014 finding the degenerate floor to confirm whether the non-monotonic relationship exists or scores are invariant to structural collapse",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 1,
+              "context_injection": false,
+              "coherence_mode": "entropy",
+              "embed_strategy": "hash",
+              "seed": 13
+            }
+          }
+        ],
+        "confidence": 0.31
+      },
+      {
+        "persona": "Deployed Engineer",
+        "reasoning": "The score improvements are marginal (4.73\u21924.77) and variance across seeds is a concern for robustness. From a stability lens, I want to test whether entropy-based coherence mode provides more stable loss curves than slot_ratio, and whether disabling context_injection reduces training variance at the cost of some peak performance. These two axes address potential instability sources without changing architecture depth.",
+        "variants": [
+          {
+            "variant_id": "iter5_dep_v1",
+            "description": "Entropy coherence mode with context injection enabled and transformer embed strategy - testing whether entropy-based coherence produces more stable optimization trajectory than slot_ratio, building on iter4_dep_v1 winner config",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 4,
+              "context_injection": true,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter5_dep_v2",
+            "description": "Length coherence mode with context injection disabled - ablating context injection to test if it introduces training instability, using length mode as a simpler lower-variance coherence signal that may improve mean score even if peak is lower",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 4,
+              "context_injection": false,
+              "coherence_mode": "length",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          }
+        ],
+        "confidence": 0.62
+      },
+      {
+        "persona": "Research Scientist",
+        "reasoning": "Iteration 4 shows marginal gains with depth-focused variants, but we haven't stress-tested the asymmetric config space: specifically, many templates (shallow-wide analog) vs. few templates with entropy-based coherence (deep-narrow analog). The research question about head count collapse at embed_dim=64 maps to template_count saturation \u2014 pushing template_count=8 with entropy coherence tests whether high multiplicity degrades signal (overfit analog), while template_count=2 with slot_ratio and context injection tests the Pareto optimum hypothesis with maximum per-slot capacity.",
+        "variants": [
+          {
+            "variant_id": "iter5_res_v1",
+            "description": "High template count (8) with entropy coherence mode and transformer embed strategy \u2014 tests whether maximum head-analog multiplicity collapses representation quality at this scale, probing the overfit/collapse boundary",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "context_injection": false,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter5_res_v2",
+            "description": "Low template count (2) with slot_ratio coherence and context injection enabled \u2014 tests the Pareto optimum hypothesis where fewer, wider representational slots with full context access maximizes per-slot capacity and coherence at embed_dim=64",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 2,
+              "context_injection": true,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "transformer",
+              "seed": 17
+            }
+          }
+        ],
+        "confidence": 0.62
+      }
+    ]
+  ],
+  "resolved": false,
+  "resolution": "max_iterations (5) reached",
+  "panel": [
+    {
+      "name": "Research Scientist",
+      "lens": "Maximize information gain about how head count affects representation learning. Look for evidence of attention pattern differentiation across heads.\n",
+      "what_if_bias": "What head count + depth combination hasn't been tested? Push into asymmetric configs (many heads, shallow vs. few heads, deep).\n"
+    },
+    {
+      "name": "Deployed Engineer",
+      "lens": "Robustness and training stability across seeds. A model that trains reliably beats one that peaks occasionally.\n",
+      "what_if_bias": "Which config has the most stable loss curve? Test lower lr or higher dropout if instability appears.\n"
+    },
+    {
+      "name": "Chaos Engineer",
+      "lens": "Find the failure mode. Probe configs where attention collapses or diverges. A head_dim of 8 is suspiciously small \u2014 does it degenerate?\n",
+      "what_if_bias": "Push to n_heads=16 (head_dim=4) or n_heads=1 with high lr. Test whether gradient explosion appears at extreme head counts.\n"
+    }
+  ]
+}
