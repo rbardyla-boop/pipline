@@ -31,7 +31,7 @@ def write_terminal_archive(concept: str, phoenix_score: float, combined: float, 
         return
     entries.append({
         "concept_hash": concept_hash,
-        "concept_preview": concept[:120] + "...",
+        "concept_preview": concept[:120] + ("..." if len(concept) > 120 else ""),
         "phoenix_score": phoenix_score,
         "combined": combined,
         "run_id": run_id,
@@ -158,26 +158,7 @@ Output ONLY a decimal number between 0.0 and 1.0. Nothing else."""
             return set()
 
     def write_terminal_archive(self, concept: str, phoenix_score: float, combined: float, run_id: str):
-        terminal_path = os.getenv("TERMINAL_ARCHIVE_PATH", "logs/terminal_archive.json")
-        Path("logs").mkdir(exist_ok=True)
-        entries = []
-        try:
-            with open(terminal_path) as f:
-                entries = json.load(f)
-        except FileNotFoundError:
-            pass
-        concept_hash = hashlib.sha256(concept.encode()).hexdigest()[:16]
-        entries.append({
-            "concept_hash": concept_hash,
-            "concept_preview": concept[:120] + "...",
-            "phoenix_score": phoenix_score,
-            "combined": combined,
-            "run_id": run_id,
-            "retired_at": datetime.now().strftime("%Y%m%d_%H%M%S")
-        })
-        with open(terminal_path, "w") as f:
-            json.dump(entries, f, indent=2)
-        print(f"[TERMINAL] Concept permanently retired (Phoenix {phoenix_score:.2f}, combined {combined:.3f})")
+        write_terminal_archive(concept, phoenix_score, combined, run_id)
 
     def evolve(
         self,

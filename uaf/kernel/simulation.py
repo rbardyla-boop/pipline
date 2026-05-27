@@ -1,20 +1,21 @@
 """Architecture-agnostic simulation kernel.
 
-SimulationKernel drives the core observe→plan→execute→verify→commit loop
-over any combination of CognitionEngine, MemorySystem, Planner,
-VerificationEngine, and RuntimeEnvironment that satisfies the UAF
-interfaces. It does not know about LangGraph, Claude, or any domain logic.
+SimulationKernel drives the core execute→verify→commit loop over any
+combination of CognitionEngine, MemorySystem, Planner, VerificationEngine,
+and RuntimeEnvironment that satisfies the UAF interfaces. It does not know
+about LangGraph, Claude, or any domain logic.
 
-The legacy LangGraph pipeline (orchestrator.py) remains the authoritative
-path when UAF_KERNEL is not set. The kernel is activated only when
-UAF_KERNEL=true is in the environment (Phase 6 cutover).
+UAF kernel is the default execution path (UAF_KERNEL=true). Set
+UAF_KERNEL=false to use the legacy LangGraph orchestrator (orchestrator.py).
 
-Loop state machine:
-  INIT → OBSERVE → PLAN → EXECUTE → VERIFY → COMMIT → COMPRESS → STABILIZE
-                                           ↘ FAIL_RECOVER (on invariant violation)
-                                                        ↘ OBSERVE (retry)
-  COMPRESS / STABILIZE → HALT (when planner says "halt")
-                       → OBSERVE (next cycle)
+Actual loop state machine:
+  INIT → EXECUTE → VERIFY → COMMIT → COMPRESS → STABILIZE → [HALT | EXECUTE]
+                          ↘ FAIL_RECOVER (on invariant violation or exception)
+                                       ↘ EXECUTE (retry, up to max_recover times)
+
+Note: OBSERVE and PLAN states exist in SimulatorState but are not used in the
+current implementation. They are reserved for a future context-refresh phase
+before execution. See TD-004 in docs/TECH_DEBT.md.
 """
 
 from __future__ import annotations
@@ -35,8 +36,6 @@ from uaf.kernel.state import CycleState, SimulationContext, VerificationResult
 
 class SimulatorState(Enum):
     INIT = auto()
-    OBSERVE = auto()
-    PLAN = auto()
     EXECUTE = auto()
     VERIFY = auto()
     COMMIT = auto()
@@ -130,7 +129,6 @@ class SimulationKernel:
 
         while sim_state != SimulatorState.HALT:
             t0 = time.perf_counter()
-            sim_state = SimulatorState.OBSERVE
 
             # ---- EXECUTE ----
             sim_state = SimulatorState.EXECUTE

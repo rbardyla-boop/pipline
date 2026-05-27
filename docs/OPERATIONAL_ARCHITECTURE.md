@@ -1,6 +1,28 @@
-# Operational Architecture — UEE v4
+# Operational Architecture — UEE v4 / UAF
 
 Pure engineering reference. No philosophy. Updated every time the graph changes.
+
+> **Default execution path (as of Phase 6 cutover):** UAF kernel (`UAF_KERNEL=true`).  
+> Legacy LangGraph pipeline (below) is still active when `UAF_KERNEL=false`.  
+> Both paths share the same seed files, environment variables, and output format.
+
+---
+
+## UAF Execution Path (default, `UAF_KERNEL=true`)
+
+```
+main.py → _run_uaf()
+  └─ make_creative_evolution_experiment()
+       └─ ExperimentRunner.execute(defn)
+            └─ SimulationKernel.run(ctx)
+                 loop: EXECUTE → VERIFY → COMMIT → COMPRESS → STABILIZE → PLAN → HALT?
+            └─ DynamicsRecorder.record() per cycle
+  └─ ExperimentLedger.record(trace)
+  └─ logs/runs/full_run_{trace.run_id}.json
+```
+
+**State machine (actual):** `INIT → EXECUTE → VERIFY → COMMIT → COMPRESS → STABILIZE → [HALT | EXECUTE]`  
+Note: `OBSERVE` and `PLAN` states exist in the enum but are not executed — see TD-004 in `docs/TECH_DEBT.md`.
 
 ---
 

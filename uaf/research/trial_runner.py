@@ -12,9 +12,16 @@ compare_traces() and best_architecture() work across all variants.
 
 from __future__ import annotations
 
+import hashlib as _hashlib
 import math
 import re
 from typing import Sequence
+
+
+def _fingerprint(text: str) -> list[float]:
+    """Deterministic text fingerprint for Goodhart convergence detection."""
+    digest = _hashlib.sha256(text.encode()).digest()
+    return [((b / 255.0) * 2 - 1) for b in digest]  # 32 floats in [-1, 1]
 
 from uaf.experiments.definition import ExperimentDefinition
 from uaf.experiments.ledger import ExperimentLedger
@@ -151,14 +158,12 @@ class _PhoenixVerification(VerificationEngine):
         goodhart = False
         if self._prev_embedding is not None:
             from uaf.dynamics.metrics import cosine_similarity
-            from architectures.parametric.adapter import ParametricCognition
-            emb = ParametricCognition(seed=0)._hash_embed(candidate)
+            emb = _fingerprint(candidate)
             sim = cosine_similarity(self._prev_embedding, emb)
             goodhart = sim > 0.85
             self._prev_embedding = emb
         else:
-            from architectures.parametric.adapter import ParametricCognition
-            self._prev_embedding = ParametricCognition(seed=0)._hash_embed(candidate)
+            self._prev_embedding = _fingerprint(candidate)
 
         verdict = result.get("verdict", "SLOP")
         return VerificationResult(

@@ -67,12 +67,17 @@ Test modules and what they cover:
 | `tests/test_kernel.py` | UAF SimulationKernel |
 | `tests/test_interfaces.py` | UAF abstract interfaces |
 | `tests/test_adapters.py` | Architecture adapters |
-| `tests/test_dynamics.py` | Trajectory recorder and metrics |
+| `tests/test_dynamics.py` | Trajectory recorder and metrics (unit) |
+| `tests/test_dynamics_real.py` | Dynamics recorder integration — Phase 10 session-embedding fix |
 | `tests/test_research.py` | Hypothesis runner and research panel |
 | `tests/test_panel.py` | Research panel |
 | `tests/test_neural_arch.py` | TinyTransformer + char tokenizer |
 | `tests/test_symbolic_arch.py` | Symbolic grammar adapter |
+| `tests/test_novelty.py` | Novelty search engine |
 | `tests/test_regression_main.py` | End-to-end regression |
+
+**Modules with no coverage** (priority gaps — see `docs/TECH_DEBT.md`):
+`security/firewall/`, `security/gateway/`, `security/governance/`, `orchestrator.py` nodes, `concept_rater.py`, `sandbox.py`, `signals.py`, `zeitgeist.py`, `dashboard.py`, `frontend/`
 
 ## Code Style
 

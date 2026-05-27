@@ -1,5 +1,9 @@
 import os
+import sys
 import json
+import traceback
+import jsonschema
+import numpy as np
 from typing import TypedDict, Dict, Any, Optional, List
 from langgraph.graph import StateGraph, END
 from engine import NoveltySearchEngine, write_terminal_archive
@@ -9,6 +13,15 @@ from concept_rater import ConceptRater, PLATEAU_DELTA, MAX_IMPROVEMENT_LOOPS
 from simulator import V5Simulator
 from pathlib import Path
 from datetime import datetime, timezone
+
+_ENGINE: "NoveltySearchEngine | None" = None
+
+
+def _get_engine() -> "NoveltySearchEngine":
+    global _ENGINE
+    if _ENGINE is None:
+        _ENGINE = NoveltySearchEngine()
+    return _ENGINE
 
 TERMINAL_PHOENIX_THRESHOLD = 4.2
 TERMINAL_COMBINED_THRESHOLD = 0.65
@@ -93,7 +106,7 @@ def mutate_node(state: PipelineState) -> Dict:
     else:
         print("\n[NODE: MUTATE] Running novelty evolution engine...")
 
-    engine = NoveltySearchEngine()
+    engine = _get_engine()
     engine.seed_archive(state["seeds"])
 
     candidates = engine.evolve(
@@ -174,12 +187,11 @@ def refine_node(state: PipelineState) -> Dict:
     goodhart_warnings = state.get("goodhart_warnings", 0)
     prev_emb = state.get("prev_top_candidate_emb")
 
-    engine_for_emb = NoveltySearchEngine()
+    engine_for_emb = _get_engine()
     current_emb = engine_for_emb.embed(state["top_candidate"])
     current_emb_list = current_emb.tolist()
 
     if prev_emb is not None:
-        import numpy as np
         prev_emb_arr = np.array(prev_emb)
         if rater.detect_convergence(current_emb, prev_emb_arr):
             goodhart_warnings += 1
@@ -324,14 +336,25 @@ _PIPELINE_KNOWN_LIMITS = [
 ]
 
 
+_AUDIT_SCHEMA = {
+    "type": "object",
+    "required": ["protocol", "article", "signals", "interpretation", "known_limits", "exported_at"],
+    "properties": {
+        "known_limits": {"type": "array", "minItems": 1},
+        "interpretation": {
+            "type": "object",
+            "required": ["layer1"],
+        },
+    },
+}
+
+
 def _write_audit_record(state: PipelineState, best_score: float, verdict: str) -> None:
     """
     Write a schema-conformant audit record to logs/audit/.
     Hard-fails with a logged error if validation fails — does NOT suppress.
     """
-    import sys
     try:
-        import subprocess
         now = datetime.now(timezone.utc).isoformat()
         audit_record = {
             "protocol": {
@@ -367,42 +390,20 @@ def _write_audit_record(state: PipelineState, best_score: float, verdict: str) -
         audit_dir.mkdir(parents=True, exist_ok=True)
         audit_path = audit_dir / f"audit_{state['run_id']}.json"
 
-        # Validate against schema using Node.js AJV (if available)
-        schema_path = Path("truthlens/truthlens-audit-schema-v1.json")
         audit_json = json.dumps(audit_record, indent=2)
 
-        if schema_path.exists():
-            result = subprocess.run(
-                [sys.executable, "-c",
-                 f"""
-import json, sys
-record = {json.dumps(audit_record)}
-# Basic required-fields check (AJV runs in Node CI)
-required = {{'protocol', 'article', 'signals', 'interpretation', 'known_limits', 'exported_at'}}
-missing = required - set(record.keys())
-if missing:
-    print(f'AUDIT VALIDATION FAIL: missing fields: {{missing}}', file=sys.stderr)
-    sys.exit(1)
-if not record.get('known_limits'):
-    print('AUDIT VALIDATION FAIL: known_limits empty', file=sys.stderr)
-    sys.exit(1)
-if record.get('interpretation', {{}}).get('layer1') is None:
-    print('AUDIT VALIDATION FAIL: interpretation.layer1 missing', file=sys.stderr)
-    sys.exit(1)
-print('Audit record valid')
-"""],
-                capture_output=True, text=True
-            )
-            if result.returncode != 0:
-                print(f"[AUDIT] Schema validation FAILED: {result.stderr.strip()}", file=sys.stderr)
-                return
+        try:
+            jsonschema.validate(instance=audit_record, schema=_AUDIT_SCHEMA)
+        except jsonschema.ValidationError as ve:
+            print(f"[AUDIT] Schema validation FAILED: {ve.message}", file=sys.stderr)
+            return
 
         with open(audit_path, "w") as f:
             f.write(audit_json)
         print(f"[AUDIT] Record written → {audit_path}")
 
     except Exception as e:
-        print(f"[AUDIT] Failed to write audit record: {e}", file=sys.stderr)
+        print(f"[AUDIT] Failed to write audit record: {e}\n{traceback.format_exc()}", file=sys.stderr)
 
 
 def build_pipeline():

@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.backends.legacy:build"
+
+[project]
+name = "uee-pipeline"
+version = "0.1.0"
+description = "Universal Extrapolative Engine — research pipeline for creative concept evolution"
+requires-python = ">=3.12"
+dependencies = [
+    "sentence-transformers>=5.5,<6.0",
+    "numpy>=2.4,<3.0",
+    "langgraph>=1.2,<2.0",
+    "anthropic>=0.102,<1.0",
+    "tavily-python>=0.7,<1.0",
+    "rich>=15.0,<16.0",
+    "pyyaml>=6.0,<7.0",
+    "python-dotenv>=1.2,<2.0",
+    "requests>=2.34,<3.0",
+    "scikit-learn>=1.8,<2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "bandit[toml]>=1.7.9",
+    "jsonschema>=4.23.0",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+exclude = ["tests*", "docs*", "scp*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.bandit]
+exclude_dirs = [".venv", "tests", "scp"]
+skips = ["B101"]
