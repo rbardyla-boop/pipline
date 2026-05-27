@@ -384,20 +384,20 @@ This means any differentiable model (RNN, diffusion, fine-tuned LLM) can be inse
 
 **Convergence instrumentation bug (Phase-10 post-mortem):** All pre-Phase-10 runs reported `final_convergence=1.0` and `trajectory_drift=0.0` as artifacts of two compounding bugs. First, `_ResearchMemory.session_snapshot()` (`uaf/research/trial_runner.py:85`) always returned `session_embeddings: []`, causing `convergence_score([])` to return the empty-list fallback `1.0` and `trajectory_drift([])` to return `0.0`. Second, `summaries_from_traces` (`trial_runner.py:317`) read the wrong key (`"trajectory_warnings"`, an integer event counter) instead of `"trajectory_drift"` (the float cumulative path length), and `DynamicsRecorder.summary()` omitted `"trajectory_drift"` from its output entirely. Both bugs were fixed in Phase-10 (`tests/test_dynamics_real.py` provides regression coverage; 217 tests pass).
 
-A post-fix validation run (`run_id: uaf_20260527_124733`, gaming domain, 5 cycles, `claude_novelty_v1`) confirms real dynamics are now produced:
+Two post-fix validation runs confirm real per-cycle dynamics are now produced. The second run (`uaf_20260527_130114`, gaming domain, 5 cycles, `claude_novelty_v1`) used the complete per-cycle snapshot fix (kernel-level capture):
 
-| Metric | Pre-fix (stub) | Post-fix (run `9cd4ad`) |
-|---|---|---|
-| `final_convergence` | 1.000 (degenerate fallback) | **0.604** (mean pairwise cosine distance) |
-| `trajectory_drift` | 0.000 (wrong key / empty list) | **1.772** (cumulative path length) |
-| `weighted_drift` (final) | 0.000 | **1.640** (decay-weighted, decreasing correctly) |
-| `novelty_mean` (range) | 0.000 | **0.43–0.76** (per-cycle, real archive cosine distance) |
-| `session_converging` | false (trivial) | false (meaningfully — exploration active) |
-| `best_score` | 4.35 (prior art) | 4.40 |
+| Cycle | Score | Convergence | Trajectory Drift | Notes |
+|---|---|---|---|---|
+| 0 | 3.20 | 1.000 | 0.000 | Single embedding — single-item fallback (expected) |
+| 1 | **4.35** | 0.455 | 0.455 | Score peaks; search space spreading |
+| 2 | 3.95 | **0.432** | 0.800 | Min convergence — maximum spread, one cycle after score peak |
+| 3 | 2.15 | 0.541 | 1.340 | Convergence rising — search space compressing |
+| 4 | 3.85 | 0.585 | 1.691 | Partial score recovery as search stabilises |
 
-The `convergence_score` value of **0.604** indicates moderate spread in the session embedding space — neither maximally collapsed (0.0) nor maximally dispersed (1.0). This is a meaningful first measurement.
+**Pre-fix (all cycles):** convergence=1.000, trajectory_drift=0.000, novelty_mean=0.000.  
+**Post-fix summary:** final_convergence=0.585, min_convergence=0.432, trajectory_drift=1.690.
 
-**Known limitation of the per-cycle series:** `convergence_score` and `trajectory_drift` are identical across all cycles in the current implementation because `ExperimentRunner` replays the post-run snapshot against each cycle record rather than capturing a snapshot at each cycle boundary. All cycles therefore see the final accumulated embedding set. This produces a correct aggregate summary but flat within-run dynamics. True per-cycle dynamics require kernel-level snapshot integration (captured in §7 future work).
+This is the first measurable attractor signal: **score peaked (4.35) at cycle 1 when convergence was actively dropping; minimum convergence (0.432) lagged the score peak by one cycle.** The pattern is consistent with the hypothesis that optimization spreads the search space before compressing around high-value regions. A larger corpus of runs is needed to confirm whether this pattern is systematic.
 
 The true convergence distribution for the full 351-experiment corpus requires a post-fix re-run; §4.3 and §5.1 convergence values remain marked pending until that data is available.
 
@@ -415,7 +415,7 @@ The engineer panel's discovery of a phase boundary, a null result, and a Pareto 
 
 The equivalence of simulation cycles to training steps means UAF is not a framework for LLM-based systems alone. Any trainable architecture — transformer, RNN, diffusion model — can be evaluated within the same scientific loop with the same panel, the same journal, and the same stopping criterion. This is the broader contribution: a research methodology as much as a framework.
 
-Future work will focus on Phoenix verification (LLM-as-judge), adversarial persona attacks (FGSM on input embeddings), multi-domain experiments, and continuous learning scenarios where the model's weights persist across iterations. Kernel-level per-cycle snapshot capture (replacing the current post-run replay) will unlock within-run convergence dynamics, enabling real-time detection of semantic attractors — the key open question Phase-10 made measurable but did not yet resolve.
+Future work will focus on Phoenix verification (LLM-as-judge), adversarial persona attacks (FGSM on input embeddings), multi-domain experiments, and continuous learning scenarios where the model's weights persist across iterations. The attractor signal observed in §6.4 — score peaking as convergence drops, min convergence lagging the score peak by one cycle — should be confirmed across a larger run corpus and across hypotheses to establish whether it is a systematic property of the optimization loop.
 
 ---
 

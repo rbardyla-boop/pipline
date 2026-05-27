@@ -71,7 +71,7 @@ class ExperimentRunner:
             domain=ctx.domain,
         )
         for cycle_record in result.cycle_records:
-            session_snap = defn.memory.session_snapshot()
+            session_snap = cycle_record.session_snapshot or defn.memory.session_snapshot()
             novelty_val = cycle_record.metadata.get("novelty")
             recorder.record(
                 cycle_record,

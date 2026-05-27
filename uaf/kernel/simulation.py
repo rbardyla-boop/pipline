@@ -59,6 +59,7 @@ class CycleRecord:
     verdict: str
     duration_ms: float
     metadata: dict[str, Any] = field(default_factory=dict)
+    session_snapshot: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -188,6 +189,7 @@ class SimulationKernel:
             novelty = self._memory.novelty_of(emb)
             combined = novelty * vresult.composite_score / 5.0
             self._memory.add(candidate, emb, novelty, generation=cycle + 1)
+            snap = self._memory.session_snapshot()
 
             if composite > best_score:
                 best_score = composite
@@ -208,6 +210,7 @@ class SimulationKernel:
                 verdict=vresult.verdict,
                 duration_ms=round(duration_ms, 1),
                 metadata={"improvement_context": vresult.improvement_context, "novelty": novelty},
+                session_snapshot=snap,
             ))
 
             # ---- PLAN (routing decision) ----
