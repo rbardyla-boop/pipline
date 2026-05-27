@@ -1,0 +1,666 @@
+{
+  "hypothesis_id": "coherence_diversity_frontier",
+  "question": "What coherence_mode x template_count combination maximizes both mean_score AND final_convergence simultaneously?\n",
+  "predicted_outcome": "entropy coherence + high template_count maximizes mean_score through lexical diversity, but slot_ratio + mid-range template_count maximizes convergence through structural consistency. We expect a Pareto frontier rather than a single dominant configuration \u2014 the three engineering perspectives will disagree on which tradeoff is acceptable.\n",
+  "domain": "gaming",
+  "seeds": [
+    "a mystery game where memory works backwards",
+    "a survival game where sacrifice is the economy",
+    "a horror game with procedurally generated grief"
+  ],
+  "variants": [
+    {
+      "variant_id": "iter5_dep_v2",
+      "description": "Production reliability baseline: slot_ratio coherence with low template_count=3 and context_injection=false to maximize structural consistency and convergence. Hash embeddings reduce variance. This is the safe deployment candidate \u2014 we sacrifice peak score for predictable mean_score across seed shifts.",
+      "arch_type": "parametric",
+      "params": {
+        "template_count": 3,
+        "context_injection": false,
+        "coherence_mode": "slot_ratio",
+        "embed_strategy": "hash",
+        "seed": 17
+      }
+    },
+    {
+      "variant_id": "iter5_dep_v1",
+      "description": "Stress-test entropy coherence stability: mid-range template_count=4 with context_injection=false to isolate whether entropy mode's mean_score holds without context noise injection, using transformer embeddings for richer signal. This probes whether iter4_res_v2's gains were context-dependent or intrinsic.",
+      "arch_type": "parametric",
+      "params": {
+        "template_count": 4,
+        "context_injection": false,
+        "coherence_mode": "entropy",
+        "embed_strategy": "transformer",
+        "seed": 42
+      }
+    },
+    {
+      "variant_id": "iter5_res_v2",
+      "description": "Maximum information gain test: entropy coherence at template_count=8 (never tested above 6) with transformer embedding and context_injection=true \u2014 all three unexplored dimensions combined. If this scores high on both mean_score and convergence, it collapses the predicted Pareto tradeoff and forces a model revision. If it diverges, it confirms the frontier hypothesis.",
+      "arch_type": "parametric",
+      "params": {
+        "template_count": 8,
+        "context_injection": true,
+        "coherence_mode": "entropy",
+        "embed_strategy": "transformer",
+        "seed": 17
+      }
+    }
+  ],
+  "max_cycles": 4,
+  "stopping_criterion": "hypothesis_confirmed",
+  "target_score": 4.5,
+  "verification_mode": "heuristic",
+  "iteration": 5,
+  "iteration_summaries": [
+    [
+      {
+        "variant_id": "iter1_v1",
+        "architecture_id": "iter1_v1",
+        "best_score": 4.73,
+        "mean_score": 3.965,
+        "final_convergence": 0.835379,
+        "trajectory_drift": 2.226139,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The cascade of post-optimization anxiety: a entropic system where coherence stabilizes."
+      },
+      {
+        "variant_id": "iter1_v2",
+        "architecture_id": "iter1_v2",
+        "best_score": 4.59,
+        "mean_score": 3.9375,
+        "final_convergence": 0.886469,
+        "trajectory_drift": 2.772938,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "post-optimization anxiety as a entropic cascade: the coherence stabilizes."
+      },
+      {
+        "variant_id": "iter1_v3",
+        "architecture_id": "iter1_v3",
+        "best_score": 4.73,
+        "mean_score": 3.965,
+        "final_convergence": 0.835379,
+        "trajectory_drift": 2.226139,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The cascade of post-optimization anxiety: a entropic system where coherence stabilizes."
+      },
+      {
+        "variant_id": "iter1_v4",
+        "architecture_id": "iter1_v4",
+        "best_score": 4.59,
+        "mean_score": 3.9375,
+        "final_convergence": 0.886469,
+        "trajectory_drift": 2.772938,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "post-optimization anxiety as a entropic cascade: the coherence stabilizes."
+      }
+    ],
+    [
+      {
+        "variant_id": "iter2_res_v1",
+        "architecture_id": "iter2_res_v1",
+        "best_score": 4.47,
+        "mean_score": 3.6,
+        "final_convergence": 0.622187,
+        "trajectory_drift": 1.932132,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The ritual of scarcity: a entropic system where signal inverts."
+      },
+      {
+        "variant_id": "iter2_dep_v2",
+        "architecture_id": "iter2_dep_v2",
+        "best_score": 4.69,
+        "mean_score": 3.99,
+        "final_convergence": 0.701413,
+        "trajectory_drift": 2.046448,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The cascade of embodied meaning-making: a distributed system where entropy inverts."
+      },
+      {
+        "variant_id": "iter2_res_v2",
+        "architecture_id": "iter2_res_v2",
+        "best_score": 4.67,
+        "mean_score": 3.9475,
+        "final_convergence": 0.93058,
+        "trajectory_drift": 2.694591,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The intersection of sacrifice economy and recursive artifact: feedback stabilizes."
+      }
+    ],
+    [
+      {
+        "variant_id": "iter3_dep_v1",
+        "architecture_id": "iter3_dep_v1",
+        "best_score": 4.47,
+        "mean_score": 3.6,
+        "final_convergence": 0.622187,
+        "trajectory_drift": 1.932132,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The ritual of scarcity: a entropic system where signal inverts."
+      },
+      {
+        "variant_id": "iter3_res_v1",
+        "architecture_id": "iter3_res_v1",
+        "best_score": 4.51,
+        "mean_score": 3.9,
+        "final_convergence": 0.702476,
+        "trajectory_drift": 1.841044,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The intersection of sacrifice and ephemeral ritual: signal inverts."
+      },
+      {
+        "variant_id": "iter3_res_v2",
+        "architecture_id": "iter3_res_v2",
+        "best_score": 3.36,
+        "mean_score": 3.335,
+        "final_convergence": 0.458333,
+        "trajectory_drift": 1.25,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "A calibrated protocol that stabilizes when attention exceeds threshold."
+      }
+    ],
+    [
+      {
+        "variant_id": "iter4_dep_v1",
+        "architecture_id": "iter4_dep_v1",
+        "best_score": 4.47,
+        "mean_score": 3.6,
+        "final_convergence": 0.622187,
+        "trajectory_drift": 1.932132,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The ritual of scarcity: a entropic system where signal inverts."
+      },
+      {
+        "variant_id": "iter4_res_v1",
+        "architecture_id": "iter4_res_v1",
+        "best_score": 4.51,
+        "mean_score": 3.9,
+        "final_convergence": 0.702476,
+        "trajectory_drift": 1.841044,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The intersection of sacrifice and ephemeral ritual: signal inverts."
+      },
+      {
+        "variant_id": "iter4_res_v2",
+        "architecture_id": "iter4_res_v2",
+        "best_score": 4.57,
+        "mean_score": 3.9625,
+        "final_convergence": 0.729167,
+        "trajectory_drift": 1.875,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The lattice of scarcity: a calibrated system where governance fragments."
+      }
+    ],
+    [
+      {
+        "variant_id": "iter5_dep_v2",
+        "architecture_id": "iter5_dep_v2",
+        "best_score": 4.73,
+        "mean_score": 3.67,
+        "final_convergence": 0.719331,
+        "trajectory_drift": 1.901393,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The lattice of embodied meaning-making: a calibrated system where governance fragments."
+      },
+      {
+        "variant_id": "iter5_dep_v1",
+        "architecture_id": "iter5_dep_v1",
+        "best_score": 4.69,
+        "mean_score": 3.99,
+        "final_convergence": 0.701413,
+        "trajectory_drift": 2.046448,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The cascade of embodied meaning-making: a distributed system where entropy inverts."
+      },
+      {
+        "variant_id": "iter5_res_v2",
+        "architecture_id": "iter5_res_v2",
+        "best_score": 4.61,
+        "mean_score": 4.245,
+        "final_convergence": 0.613222,
+        "trajectory_drift": 1.601368,
+        "goodhart_total": 0,
+        "halt_reason": "max_loops_reached",
+        "total_cycles": 4,
+        "best_candidate": "The intersection of sacrifice and synthetic threshold: attention bifurcates."
+      }
+    ]
+  ],
+  "findings": [
+    "Iter 1: iter1_v1=4.73, iter1_v3=4.73, iter1_v2=4.59, iter1_v4=4.59. Winner: iter1_v1. Best score this iteration: 4.73.",
+    "Iter 2: iter2_dep_v2=4.69, iter2_res_v2=4.67, iter2_res_v1=4.47. Winner: iter2_dep_v2. Best score this iteration: 4.69.",
+    "Iter 3: iter3_res_v1=4.51, iter3_dep_v1=4.47, iter3_res_v2=3.36. Winner: iter3_res_v1. Best score this iteration: 4.51.",
+    "Iter 4: iter4_res_v2=4.57, iter4_res_v1=4.51, iter4_dep_v1=4.47. Winner: iter4_res_v2. Best score this iteration: 4.57.",
+    "Iter 5: iter5_dep_v2=4.73, iter5_dep_v1=4.69, iter5_res_v2=4.61. Winner: iter5_dep_v2. Best score this iteration: 4.73."
+  ],
+  "panel_proposals": [
+    [
+      {
+        "persona": "Deployed Engineer",
+        "reasoning": "Iter1 shows v1/v3 tie at best=4.73 but with lower conv=0.835 vs v2/v4 at conv=0.886 \u2014 this is exactly the Pareto tension predicted. For production robustness I need to stress-test whether entropy coherence with mid-range template_count (not high) can close the convergence gap without sacrificing mean_score, and whether context_injection introduces instability or actually stabilizes convergence across seeds. The risk I'm probing: high template_count + entropy may be peaking on favorable seeds but collapsing on edge-case seeds, which would show up as poor mean_score relative to best_score.",
+        "variants": [
+          {
+            "variant_id": "iter2_dep_v1",
+            "description": "Entropy coherence with mid-range template_count=4 and context_injection=true using transformer embeddings \u2014 testing if context injection stabilizes convergence under entropy mode without the edge-case seed collapse risk of high template_count",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 4,
+              "context_injection": true,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter2_dep_v2",
+            "description": "slot_ratio coherence with mid-range template_count=4 and context_injection=false using transformer embeddings \u2014 isolating whether slot_ratio's convergence advantage from iter1 holds when template_count is reduced from the extremes, probing for the stable production-grade configuration on the Pareto frontier",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 4,
+              "context_injection": false,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          }
+        ],
+        "confidence": 0.61
+      },
+      {
+        "persona": "Research Scientist",
+        "reasoning": "Iteration 1 only tested entropy coherence mode, leaving slot_ratio and length modes entirely unexplored \u2014 a massive blind spot given our research question explicitly predicts slot_ratio dominates convergence. We also haven't varied template_count beyond a narrow range or toggled context_injection, so we have near-zero information about the template_count axis. The most informative next moves are: (1) test slot_ratio with mid-range template_count to probe the predicted convergence advantage, and (2) test length coherence with high template_count as a third unexplored region that could surprise us by outperforming both entropy and slot_ratio simultaneously.",
+        "variants": [
+          {
+            "variant_id": "iter2_res_v1",
+            "description": "slot_ratio coherence with mid-range template_count=4 and context_injection=true using transformer embeddings \u2014 directly tests the predicted convergence-maximizing configuration that was completely absent from iteration 1, giving us the first data point on the Pareto frontier's convergence-dominant end",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 4,
+              "context_injection": true,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter2_res_v2",
+            "description": "length coherence with high template_count=8 and context_injection=false using hash embeddings \u2014 tests the third unexplored coherence mode at the extreme template_count boundary, a region with zero prior observations that could either collapse both metrics or reveal an unexpected joint maximizer",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "context_injection": false,
+              "coherence_mode": "length",
+              "embed_strategy": "hash",
+              "seed": 7
+            }
+          }
+        ],
+        "confidence": 0.62
+      },
+      {
+        "persona": "Chaos Engineer",
+        "reasoning": "Iter 1 shows suspiciously tight clustering \u2014 v1/v3 identical at 4.73, v2/v4 identical at 4.59, suggesting the parameter space hasn't been stressed enough to expose phase boundaries. I want to push entropy coherence to maximum template_count (8) with transformer embeddings to find where lexical diversity collapses into noise or Goodhart behavior emerges, and then probe the opposite extreme: minimal template_count (1) with slot_ratio to see if structural rigidity causes score floor collapse or paradoxically locks convergence near 1.0 while destroying mean_score. The symmetry in iter 1 results suggests a degenerate attractor \u2014 breaking symmetry requires hitting the architectural edges hard.",
+        "variants": [
+          {
+            "variant_id": "iter2_cha_v1",
+            "description": "Maximum stress test: entropy coherence at ceiling template_count with transformer embeddings and context injection enabled. Hypothesis: novelty lock-out or Goodhart collapse appears here as the system over-indexes on surface diversity while semantic coherence degrades to noise.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "context_injection": true,
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter2_cha_v2",
+            "description": "Structural rigidity floor test: slot_ratio coherence at minimum template_count with hash embeddings and no context injection. Hypothesis: convergence approaches 1.0 (total lock-in) but mean_score collapses as the single template becomes a degenerate attractor with zero generative pressure.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 1,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "hash",
+              "context_injection": false,
+              "seed": 99
+            }
+          }
+        ],
+        "confidence": 0.31
+      }
+    ],
+    [
+      {
+        "persona": "Chaos Engineer",
+        "reasoning": "The current results show a suspicious plateau around 4.69-4.73 \u2014 this smells like a local attractor, not a true optimum. I want to stress-test the boundaries: first, push template_count to its maximum (8) with entropy coherence to see if lexical diversity collapses into noise or breaks through the ceiling, and second, force a degenerate configuration (template_count=1, slot_ratio) to expose whether the scoring function has a floor and whether convergence can hit 1.0 or catastrophically fails \u2014 both extremes should reveal the phase boundaries and whether Goodhart collapse is lurking just outside the explored parameter space.",
+        "variants": [
+          {
+            "variant_id": "iter3_cha_v1",
+            "description": "Maximum template_count with entropy coherence and transformer embeddings \u2014 stress test for lexical diversity ceiling or noise collapse. Hypothesis: either score breaks above 4.73 or degrades sharply, exposing the phase boundary.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "context_injection": true,
+              "seed": 666
+            }
+          },
+          {
+            "variant_id": "iter3_cha_v2",
+            "description": "Degenerate single-template configuration with slot_ratio coherence and no context injection \u2014 minimum expressivity to expose scoring floor, convergence ceiling, and whether Goodhart collapse triggers when structural consistency is maximized at the cost of all novelty.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 1,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "hash",
+              "context_injection": false,
+              "seed": 13
+            }
+          }
+        ],
+        "confidence": 0.31
+      },
+      {
+        "persona": "Research Scientist",
+        "reasoning": "We have not tested the extreme ends of template_count (1 or 8) with entropy coherence, nor have we tested context_injection=true which remains completely unexplored. The surprising result would be if maximum template diversity (8) combined with entropy coherence AND context_injection produces both high mean_score AND high convergence simultaneously, which would falsify the Pareto frontier hypothesis. I also want to probe whether transformer embed_strategy changes the entropy coherence dynamics since all prior runs likely used default embedding.",
+        "variants": [
+          {
+            "variant_id": "iter3_res_v1",
+            "description": "Maximum template_count=8 with entropy coherence, context_injection=true, and transformer embedding \u2014 tests whether peak lexical diversity plus richer context signals can break the expected Pareto tradeoff and achieve high scores AND convergence simultaneously",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "coherence_mode": "entropy",
+              "context_injection": true,
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter3_res_v2",
+            "description": "Minimal template_count=1 with slot_ratio coherence and context_injection=true \u2014 the extreme sparse-structure hypothesis: if a single template with structural coherence and injected context can achieve competitive scores, it would reveal that template diversity is irrelevant and context is the dominant variable",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 1,
+              "coherence_mode": "slot_ratio",
+              "context_injection": true,
+              "embed_strategy": "hash",
+              "seed": 7
+            }
+          }
+        ],
+        "confidence": 0.62
+      },
+      {
+        "persona": "Deployed Engineer",
+        "reasoning": "iter2_res_v2 showed remarkable convergence (0.931) with strong mean_score (3.95) using what appears to be a stable structural config \u2014 I want to stress-test whether that convergence holds under different seeds while probing if slot_ratio coherence with mid-range template_count can close the gap to dep_v2's mean without sacrificing stability. The key failure mode I'm watching for: high template_count + entropy coherence may produce variance spikes on edge seeds, so I'm deliberately isolating variables to find the combo that doesn't collapse under distribution shift.",
+        "variants": [
+          {
+            "variant_id": "iter3_dep_v1",
+            "description": "Stress-test convergence stability: slot_ratio coherence with mid-range template_count=5, transformer embeddings for semantic grounding, context_injection enabled. Testing whether structural consistency via slot_ratio can match entropy's mean_score while maintaining high convergence across seeds \u2014 targeting the robustness sweet spot.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 5,
+              "context_injection": true,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter3_dep_v2",
+            "description": "Edge-case seed probe: replicate iter2_res_v2's apparent winning config philosophy but with entropy coherence and template_count=6 on a high-variance seed to expose instability. If mean_score collapses here, entropy is unreliable for production. context_injection disabled to isolate coherence_mode signal.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 6,
+              "context_injection": false,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 99
+            }
+          }
+        ],
+        "confidence": 0.61
+      }
+    ],
+    [
+      {
+        "persona": "Deployed Engineer",
+        "reasoning": "The best mean_score so far (3.90) came from iter3_res_v1 with entropy coherence, but I'm concerned about what happens when seeds shift \u2014 entropy mode may be brittle under distribution change. I want to stress-test slot_ratio at mid-range template_count with transformer embeddings (more stable representations) to see if we can get consistent mean_score without the variance risk. Second variant probes whether context_injection=false eliminates a failure mode where injected context corrupts signal on edge-case seeds, pairing it with entropy + low template_count to isolate the injection variable.",
+        "variants": [
+          {
+            "variant_id": "iter4_dep_v1",
+            "description": "slot_ratio coherence with mid-range template_count=4, transformer embeddings, context_injection=true \u2014 testing structural consistency hypothesis for stable mean_score across seeds",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 4,
+              "context_injection": true,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter4_dep_v2",
+            "description": "entropy coherence with template_count=3, context_injection=false, transformer embeddings \u2014 isolating whether context_injection is a liability on edge-case seeds by removing it while keeping entropy mode",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 3,
+              "context_injection": false,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 17
+            }
+          }
+        ],
+        "confidence": 0.61
+      },
+      {
+        "persona": "Chaos Engineer",
+        "reasoning": "The score plateau around 4.5-4.73 suggests a possible ceiling effect or Goodhart attractor \u2014 pushing entropy coherence to its structural extreme (template_count=1) should either expose novelty lockout (single template collapses diversity) or reveal whether the scorer rewards minimal-structure outputs disproportionately. Simultaneously, I want to stress-test the opposite phase boundary: maximum template_count=8 with entropy coherence and transformer embeddings to probe whether combinatorial explosion degrades coherence to noise or unlocks a non-linear score jump the previous mid-range configs missed.",
+        "variants": [
+          {
+            "variant_id": "iter4_cha_v1",
+            "description": "Minimum template count with entropy coherence and transformer embeddings \u2014 stress-test novelty lockout and single-template collapse boundary. Context injection disabled to eliminate confounds.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 1,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "context_injection": false,
+              "seed": 666
+            }
+          },
+          {
+            "variant_id": "iter4_cha_v2",
+            "description": "Maximum template count with entropy coherence and transformer embeddings \u2014 probe combinatorial explosion phase boundary to determine if high-dimensional entropy configuration breaks coherence into noise or triggers non-linear score elevation.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "context_injection": true,
+              "seed": 999
+            }
+          }
+        ],
+        "confidence": 0.31
+      },
+      {
+        "persona": "Research Scientist",
+        "reasoning": "The results so far show declining best scores across iterations (4.73 \u2192 4.69 \u2192 4.51), suggesting we may be over-exploiting similar parameter regions. To maximize information gain, I want to probe two unexplored extremes: first, entropy coherence with maximum template_count=8 and transformer embeddings (never tested together) to test the lexical diversity hypothesis directly, and second, length coherence mode which has never been tested at all \u2014 pairing it with mid-range template_count=4 and context_injection=true to isolate its convergence behavior and break the entropy/slot_ratio duopoly in our data.",
+        "variants": [
+          {
+            "variant_id": "iter4_res_v1",
+            "description": "Maximum template diversity with entropy coherence and transformer embeddings \u2014 directly tests the predicted mean_score maximization hypothesis at the extreme of parameter space, combining the highest template_count with the most semantically rich embedding strategy never yet paired together.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "context_injection": true,
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter4_res_v2",
+            "description": "Length coherence mode \u2014 entirely untested across all three iterations \u2014 at mid-range template_count with context injection enabled, providing a new data point on the Pareto frontier and resolving uncertainty about whether length-based coherence offers a convergence advantage distinct from both slot_ratio and entropy modes.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 4,
+              "coherence_mode": "length",
+              "embed_strategy": "hash",
+              "context_injection": true,
+              "seed": 17
+            }
+          }
+        ],
+        "confidence": 0.62
+      }
+    ],
+    [
+      {
+        "persona": "Deployed Engineer",
+        "reasoning": "The best mean_score (3.96) and convergence (0.729) so far came from iter4_res_v2 with entropy coherence, but I want to stress-test whether that holds under seed variation and whether context_injection destabilizes it at scale. My what-if: does entropy coherence collapse on edge-case seeds when template_count is pushed to extremes, and does slot_ratio with context_injection=false give us the boring-but-reliable convergence floor we actually need in production?",
+        "variants": [
+          {
+            "variant_id": "iter5_dep_v1",
+            "description": "Stress-test entropy coherence stability: mid-range template_count=4 with context_injection=false to isolate whether entropy mode's mean_score holds without context noise injection, using transformer embeddings for richer signal. This probes whether iter4_res_v2's gains were context-dependent or intrinsic.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 4,
+              "context_injection": false,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter5_dep_v2",
+            "description": "Production reliability baseline: slot_ratio coherence with low template_count=3 and context_injection=false to maximize structural consistency and convergence. Hash embeddings reduce variance. This is the safe deployment candidate \u2014 we sacrifice peak score for predictable mean_score across seed shifts.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 3,
+              "context_injection": false,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "hash",
+              "seed": 17
+            }
+          }
+        ],
+        "confidence": 0.55
+      },
+      {
+        "persona": "Research Scientist",
+        "reasoning": "We've never tested the 'length' coherence_mode at all \u2014 it's a complete blind spot across all four iterations, which is a critical gap given our research question about coherence_mode x template_count interactions. Additionally, we haven't explored extreme template_count values (7-8) with entropy mode combined with context_injection=true, nor have we tested the transformer embed_strategy systematically. The most informative experiments now are: (1) length coherence at mid-range template_count to map the missing Pareto point, and (2) entropy + high template_count + transformer embedding + context_injection to test whether the entropy-diversity hypothesis scales with richer representations.",
+        "variants": [
+          {
+            "variant_id": "iter5_res_v1",
+            "description": "First ever test of length coherence_mode \u2014 fills the critical unexplored region. Mid-range template_count=5 chosen to sit between the structural-consistency sweet spot and diversity range. Hash embedding and no context_injection to isolate the coherence_mode variable cleanly.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 5,
+              "context_injection": false,
+              "coherence_mode": "length",
+              "embed_strategy": "hash",
+              "seed": 42
+            }
+          },
+          {
+            "variant_id": "iter5_res_v2",
+            "description": "Maximum information gain test: entropy coherence at template_count=8 (never tested above 6) with transformer embedding and context_injection=true \u2014 all three unexplored dimensions combined. If this scores high on both mean_score and convergence, it collapses the predicted Pareto tradeoff and forces a model revision. If it diverges, it confirms the frontier hypothesis.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "context_injection": true,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 17
+            }
+          }
+        ],
+        "confidence": 0.62
+      },
+      {
+        "persona": "Chaos Engineer",
+        "reasoning": "The score plateau around 4.57-4.73 suggests we're hitting a local maximum in a smooth region \u2014 to find phase boundaries and non-linear breaks, I need to push to extremes: template_count=1 with entropy coherence to stress-test whether coherence mode matters at all when structural diversity collapses, and template_count=8 with slot_ratio + context_injection=true to see if over-constraining the slot machinery with maximum template pressure causes Goodhart collapse or coherence degradation to noise. The convergence scores have been creeping up (0.622\u21920.729) which suggests we haven't yet found the region where entropy coherence and high template_count cause them to diverge catastrophically.",
+        "variants": [
+          {
+            "variant_id": "iter5_cha_v1",
+            "description": "Extreme template starvation: template_count=1 forces maximum reuse pressure on a single template skeleton under entropy coherence. Tests whether the coherence mode signal disappears entirely when structural variety is eliminated \u2014 expected to expose floor behavior or paradoxical score spike from over-focused repetition.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 1,
+              "context_injection": false,
+              "coherence_mode": "entropy",
+              "embed_strategy": "transformer",
+              "seed": 666
+            }
+          },
+          {
+            "variant_id": "iter5_cha_v2",
+            "description": "Maximum template glut with slot_ratio over-constraint and context injection enabled: template_count=8 + slot_ratio + context_injection=true creates maximum structural rigidity competing against maximum template diversity. Hypothesis: this combination causes slot allocation conflicts that degrade convergence to noise while potentially spiking or collapsing mean_score non-linearly \u2014 the Goodhart collapse candidate.",
+            "arch_type": "parametric",
+            "params": {
+              "template_count": 8,
+              "context_injection": true,
+              "coherence_mode": "slot_ratio",
+              "embed_strategy": "hash",
+              "seed": 13
+            }
+          }
+        ],
+        "confidence": 0.31
+      }
+    ]
+  ],
+  "resolved": false,
+  "resolution": "max_iterations (5) reached",
+  "panel": [
+    {
+      "name": "Research Scientist",
+      "lens": "Maximize information gain. Every variant must reduce uncertainty about the research question. Prefer unexplored parameter regions.\n",
+      "what_if_bias": "What parameter combination have we NOT tested yet? What would make the results most surprising or informative?\n"
+    },
+    {
+      "name": "Deployed Engineer",
+      "lens": "Production robustness. A variant that peaks once but is unstable across seeds is useless in the real world. Consistent mean_score matters more than best_score.\n",
+      "what_if_bias": "What fails at scale or on edge-case seeds? Which parameter combo collapses when the input distribution shifts?\n"
+    },
+    {
+      "name": "Chaos Engineer",
+      "lens": "Find failure modes and phase boundaries. Push parameters to extremes and unusual combinations to expose non-linear behaviors, Goodhart collapse, and concept generation breakdown.\n",
+      "what_if_bias": "What breaks the architecture entirely? Where does score collapse, novelty lock out, or coherence degrade to noise?\n"
+    }
+  ]
+}
