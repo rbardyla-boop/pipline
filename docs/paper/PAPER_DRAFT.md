@@ -302,7 +302,8 @@ Across 341 gaming domain experiments:
 | Best score achieved | **4.78 / 5.0** (iter4_dep_v2) |
 | Mean best score | **4.52** |
 | Mean score (all cycles) | **3.85** |
-| Convergence success rate | **[PENDING — post-Phase-10 re-run required; see §6.4]** |
+| Convergence success rate | **[PENDING — full corpus re-run required; see §6.4]** |
+| Sample convergence (post-fix, 1 run) | **0.604** mean pairwise cosine distance (`uaf_20260527_124733`) |
 | Goodhart violations | **0** across all experiments |
 | Distinct architectures evaluated | **37** |
 | Halt reason | 96.9% max_loops_reached; 3.1% planner_halt |
@@ -381,7 +382,24 @@ This means any differentiable model (RNN, diffusion, fine-tuned LLM) can be inse
 
 **Heuristic verification:** All 351 experiments used the heuristic verifier (word diversity + length + structural markers). This is fast and free but may not reflect true quality. The Phoenix LLM rater (using Claude as a judge) was not used due to cost — it is the natural next step for validating whether heuristic scores correlate with human judgment.
 
-**Convergence instrumentation bug (Phase-10 post-mortem):** All pre-Phase-10 runs reported `final_convergence=1.0` and `trajectory_drift=0.0` as artifacts of two compounding bugs. First, `_ResearchMemory.session_snapshot()` (`uaf/research/trial_runner.py:85`) always returned `session_embeddings: []`, causing `convergence_score([])` to return the empty-list fallback `1.0` and `trajectory_drift([])` to return `0.0`. Second, `summaries_from_traces` (`trial_runner.py:317`) read the wrong key (`"trajectory_warnings"`, an integer event counter) instead of `"trajectory_drift"` (the float cumulative path length), and `DynamicsRecorder.summary()` omitted `"trajectory_drift"` from its output entirely. Both bugs were fixed in Phase-10 (`tests/test_dynamics_real.py` provides regression coverage; 217 tests pass). The true convergence and drift distributions for the 351-experiment corpus are unknown until a post-fix re-run; convergence claims in §4.3 and §5.1 are marked pending accordingly.
+**Convergence instrumentation bug (Phase-10 post-mortem):** All pre-Phase-10 runs reported `final_convergence=1.0` and `trajectory_drift=0.0` as artifacts of two compounding bugs. First, `_ResearchMemory.session_snapshot()` (`uaf/research/trial_runner.py:85`) always returned `session_embeddings: []`, causing `convergence_score([])` to return the empty-list fallback `1.0` and `trajectory_drift([])` to return `0.0`. Second, `summaries_from_traces` (`trial_runner.py:317`) read the wrong key (`"trajectory_warnings"`, an integer event counter) instead of `"trajectory_drift"` (the float cumulative path length), and `DynamicsRecorder.summary()` omitted `"trajectory_drift"` from its output entirely. Both bugs were fixed in Phase-10 (`tests/test_dynamics_real.py` provides regression coverage; 217 tests pass).
+
+A post-fix validation run (`run_id: uaf_20260527_124733`, gaming domain, 5 cycles, `claude_novelty_v1`) confirms real dynamics are now produced:
+
+| Metric | Pre-fix (stub) | Post-fix (run `9cd4ad`) |
+|---|---|---|
+| `final_convergence` | 1.000 (degenerate fallback) | **0.604** (mean pairwise cosine distance) |
+| `trajectory_drift` | 0.000 (wrong key / empty list) | **1.772** (cumulative path length) |
+| `weighted_drift` (final) | 0.000 | **1.640** (decay-weighted, decreasing correctly) |
+| `novelty_mean` (range) | 0.000 | **0.43–0.76** (per-cycle, real archive cosine distance) |
+| `session_converging` | false (trivial) | false (meaningfully — exploration active) |
+| `best_score` | 4.35 (prior art) | 4.40 |
+
+The `convergence_score` value of **0.604** indicates moderate spread in the session embedding space — neither maximally collapsed (0.0) nor maximally dispersed (1.0). This is a meaningful first measurement.
+
+**Known limitation of the per-cycle series:** `convergence_score` and `trajectory_drift` are identical across all cycles in the current implementation because `ExperimentRunner` replays the post-run snapshot against each cycle record rather than capturing a snapshot at each cycle boundary. All cycles therefore see the final accumulated embedding set. This produces a correct aggregate summary but flat within-run dynamics. True per-cycle dynamics require kernel-level snapshot integration (captured in §7 future work).
+
+The true convergence distribution for the full 351-experiment corpus requires a post-fix re-run; §4.3 and §5.1 convergence values remain marked pending until that data is available.
 
 **Single domain:** All primary experiments used gaming concept seeds. Generalization to code, science, medicine, or long-form text is untested. The UAF is domain-agnostic by design, but verification metrics may need domain-specific tuning.
 
@@ -397,7 +415,7 @@ The engineer panel's discovery of a phase boundary, a null result, and a Pareto 
 
 The equivalence of simulation cycles to training steps means UAF is not a framework for LLM-based systems alone. Any trainable architecture — transformer, RNN, diffusion model — can be evaluated within the same scientific loop with the same panel, the same journal, and the same stopping criterion. This is the broader contribution: a research methodology as much as a framework.
 
-Future work will focus on Phoenix verification (LLM-as-judge), adversarial persona attacks (FGSM on input embeddings), multi-domain experiments, and continuous learning scenarios where the model's weights persist across iterations.
+Future work will focus on Phoenix verification (LLM-as-judge), adversarial persona attacks (FGSM on input embeddings), multi-domain experiments, and continuous learning scenarios where the model's weights persist across iterations. Kernel-level per-cycle snapshot capture (replacing the current post-run replay) will unlock within-run convergence dynamics, enabling real-time detection of semantic attractors — the key open question Phase-10 made measurable but did not yet resolve.
 
 ---
 
