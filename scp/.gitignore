@@ -29,3 +29,28 @@ client/desktop/src-tauri/target/
 # Dev-harness key files and test fixtures (NOT PRODUCTION — see cli/endpoint/src/main.rs)
 *.key
 *.card
+
+# Python (tolsv3 subtree)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+*.egg-info/
+dist/
+build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Data outputs and experiment caches
+tolsv3/outputs/*.json
+tolsv3/outputs/step*.py
+
+# OS junk
+Thumbs.db
+desktop.ini
