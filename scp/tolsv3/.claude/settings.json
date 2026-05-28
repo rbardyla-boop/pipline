@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python tols_v3_phase2.py)",
+      "Bash(python3 tols_v3_phase2.py)",
+      "Bash(kill 1403961)",
+      "Bash(python3 -c \"import tols_v3_phase2; print\\('syntax OK'\\)\")",
+      "Bash(python3 -c \"import tols_v3_phase4; print\\('syntax OK'\\)\")",
+      "Bash(python3 tols_v3_phase4.py)",
+      "Read(//mnt/user-data/**)",
+      "Read(//home/**)",
+      "Bash(python3 step1_keff_ablation.py)",
+      "Bash(python3 step2_basin_radius.py)",
+      "Bash(python3 step3_package.py)",
+      "Bash(python3 step4_mnist.py)",
+      "Bash(python3 step5_decision.py)",
+      "Bash(pip install:*)",
+      "Bash(python3 -c \"import sklearn, pandas; print\\('OK'\\)\")",
+      "Bash(python3 step4_mnist_real.py)",
+      "Bash(python basin_bound_verify.py)",
+      "Bash(python3 basin_bound_verify.py)",
+      "Bash(python3 argmax_experiment.py)",
+      "Bash(python3 whitening_experiment.py)",
+      "Bash(python3 -c ':*)",
+      "Bash(python3 hopfield_testbed.py)"
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "source": "MNIST",
+  "simulated": false,
+  "timing_ms": {
+    "tols": 38.6608111760385,
+    "knn": 0.008315969607792795,
+    "softmax": 0.02348261371177311
+  }
+}

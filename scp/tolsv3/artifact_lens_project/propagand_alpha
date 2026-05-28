@@ -1,0 +1,161 @@
+**PROPAGANDA_ALPHA v1.0**  
+**Narrative Control & Cognitive Warfare Extraction & Torture-Test Framework**  
+
+```
+╔════════════════════════════════════════════════════════════════════════════╗
+║                                                                            ║
+║  ██████╗ ██████╗  ██████╗ ██████╗  █████╗  ██████╗  █████╗ ███╗   ██╗    ║
+║ ██╔══██╗██╔══██╗██╔═══██╗██╔══██╗██╔══██╗██╔════╝ ██╔══██╗████╗  ██║    ║
+║ ██████╔╝██████╔╝██║   ██║██████╔╝███████║██║  ███╗███████║██╔██╗ ██║    ║
+║ ██╔═══╝ ██╔══██╗██║   ██║██╔══██╗██╔══██║██║   ██║██╔══██║██║╚██╗██║    ║
+║ ██║     ██║  ██║╚██████╔╝██║  ██║██║  ██║╚██████╔╝██║  ██║██║ ╚████║    ║
+║ ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═══╝    ║
+║                                                                            ║
+║   Narrative Grounding • Regime Gating • Deflation Discipline              ║
+║                                                                            ║
+╚════════════════════════════════════════════════════════════════════════════╝
+```
+
+**Philosophy**  
+Official narratives, state media, and "organic" social trends are political artifacts first, measurements second.  
+Propaganda (historical: Stalin visual cults + Mao portable ideology + Khmer Rouge Year Zero erasure; modern: Russia/China/Iran cognitive warfare via FIMI, Doppelgänger ops, AI deepfakes, hybrid influence) moves real behavior at macro scale—eroding trust, polarizing societies, rewriting history—whether anyone admits the playbook or not.  
+
+**PROPAGANDA_ALPHA** forces every claim through multi-source *narrative proxies* (media volume spikes, bot networks, cross-platform echo, SHAP on drivers), regime-aware break detection (Crisis vs. Stable narrative states), and ruthless deflation—so you see the shadow cognitive gravity without pretending the machine is neutral.  
+
+It integrates directly with the ALPHA SUITE (GEOPOL/CRIME/CRYPTO/COMPARE) as the **Narrative Friction Layer**, META-SCIENCE for authority inversion on "consensus" dismissals, and VAL/GROK APEX for falsification-first governance. No black-box illusions. Every detection survives DSR at realistic N ≥ 200.  
+
+**Core Pillars** (adapted from ALPHA SUITE template)  
+
+1. **Narrative Grounding**  
+   Headlines, state TV, and influencer "organic" posts lie; verifiable proxies do not. Verify every signal against: cross-platform volume/echo (X/TikTok/Telegram/YouTube spikes), bot/amplifier networks (Graphika-style), IP/state-media attribution (RT/CGTN/KCNA clones), AI-content detectors, historical revisionism timestamps, and real-world impact (polarization polls, election interference metrics, policy paralysis). Front-loading of identical slogans during crises = lead indicator.  
+
+2. **Regime Gating**  
+   Narrative "rules" change in Crisis (elections, wars, scandals) vs. Stable states. Use Bayesian TVP-VAR (or HMM) with narrative covariates (funding-rate analogs = synchronized slogan floods, SOPR analog = sentiment inversion). Weight physical/digital proxies 1.0 in Crisis; suppress "organic" sentiment to 0.3. P(Crisis) > 0.65 triggers full physical weighting.  
+
+3. **Deflation Discipline**  
+   Narrative backtests are gamed harder than tariffs or crime stats. Every correlation/edge must survive Deflated Sharpe Ratio (DSR) at N ≥ 200 (fat tails from 24/7 digital firehoses). Report raw + deflated + PSR confidence. SHAP audit mandatory on divergences.  
+
+**Hard Rules (Non-Negotiable)**  
+**HR-P1:** Always ablate official/"organic" narratives vs. proxy stack (volume spikes, bot graphs, attribution clusters, real-world outcomes). If narrative wins in high-Crisis periods → framework failed.  
+**HR-P2:** DSR mandatory at N ≥ 200. Report raw correlation + deflated + PSR.  
+**HR-P3:** No claim stronger than weakest proxy. Missing bot/attribution data → downgrade to "preliminary observation."  
+**HR-P4:** Regime probability threshold locked at 0.65.  
+**HR-P5:** SHAP audit on every divergence (which proxy drives mismatch: synchronized slogans vs. organic sentiment?).  
+**HR-P6:** Evidence-Language Alignment (HR-R7 from GROK APEX): 1-seed = "suggests"; 3+ seeds + falsification = "preliminary evidence"; external replication = "established pattern."  
+
+**Tactical 3-Phase Workflow** (mirrors GEOPOL/CRIME/CRYPTO)  
+
+**Phase 1 — Ingestion & Macro Trigger**  
+• Monitor: Google Trends/X spikes for playbook terms ("NATO provoked," "declining West," "Year Zero" analogs), synchronized slogan floods, state-media partnerships (TASS-KCNA 2026 deals).  
+• Regime check: Election cycles, geopolitical shocks, policy crises (FOMC analogs = scandal timing).  
+• Threshold: Normalized volume >40 or cross-platform echo >5× baseline = "Information Entry."  
+
+**Phase 2 — Reality Mapping (The Narrative Blocker-Buster)**  
+• Cross-reference official narratives vs.:  
+  – Digital proxies (bot networks, AI detectors, IP clusters, Doppelgänger clones).  
+  – Impact proxies (polarization metrics, trust-in-institutions polls, election anomalies, policy paralysis).  
+  – Historical anchors (Stalin/Mao/Pol Pot playbooks + modern evolutions: NK dynastic cult, Xi app-based self-criticism, Putin historical revisionism).  
+• Rule of thumb: Synchronized slogan floods + enemy demonization + historical inversion during Crisis = classic playbook persistence (2025–2026 Romania/TikTok, EU hybrid sabotage examples).  
+
+**Phase 3 — Regime-Aware Gating & Execution**  
+• Deploy Bayesian TVP-VAR with narrative covariates (slogan volume, attribution strength, real-world impact).  
+• Gating logic: narrative_physical_weight = 1.0 if P(Crisis) > 0.65 else 0.4.  
+• SHAP audit; deflate correlations; autopsy incentives (who benefits from narrative gap: domestic actors amplifying foreign ops, media for clicks, politicians for mobilization?).  
+• Output: PPDA Score (see below) + verdict.  
+
+**The Propaganda Playbook Detection Algorithm (PPDA)** — Core Tactical Engine  
+(Directly from your provided sketch, formalized + integrated with ALPHA rigor + 2026 data.)  
+
+**Goal:** Flag coordinated playbook attacks (Stalin/Mao/Pol Pot → modern Russia/China/Iran/NK) on Western nations.  
+
+**Inputs:** Social/media monitoring, state-media trackers, fact-checker reports (EUvsDisinfo/Graphika), bot analysis, election/crisis timing.  
+
+**Core Playbook Tactics → Signals (scored 0–3 per category; total ≥8 = Active Op; ≥12 + attribution = Coordinated State Attack)**  
+
+| Tactic (Historical → Modern)                  | Modern Western Signal (2026 examples)                          | Detection Threshold                  |
+|-----------------------------------------------|----------------------------------------------------------------|--------------------------------------|
+| Ideological monopoly + repetition            | Identical slogans across platforms (e.g., "NATO provoked," "declining West") via state + proxies + bots/AI | Volume spike + cross-platform echo  |
+| Enemy demonization                           | West/NATO/US as aggressor/"Nazis"/"globalists"; amplify domestic wedges (race/gender/borders) | Consistent framing + foreign attribution |
+| Personality/party cult or faceless org       | Heroic leader narratives or anonymous "alternative media" pushing regime line | Viral pro-authoritarian + criticism suppression |
+| Historical revisionism + Year Zero erasure   | Rewriting WWII/Ukraine/COVID/Taiwan history; erasing inconvenient facts | Coordinated anniversary/crisis campaigns |
+| Mass mobilization / struggle sessions        | Calls for "people’s war"; amplified protests/influencer armies | Sudden coordinated real-world + online actions |
+| Deception / united fronts / salami tactics   | Alliances with domestic extremes then betrayal; "useful idiots" | Actor mapping + narrative laundering |
+| Tech isolation / AI amplification            | VPN blocks, alternative platforms, deepfakes, data voids     | Policy pushes or platform migrations |
+
+**Algorithm Steps (daily/weekly during triggers; implementable via Grok tools + code_execution):**  
+1. **Scan** — Aggregate via web_search / x_keyword_search / x_semantic_search / browse_page for spikes.  
+2. **Score** — Tactic-by-tactic (use SHAP-style for driver attribution).  
+3. **Attribute** — Russia (RT/Sputnik/Doppelgänger), China (Three Warfares/CGTN/United Front), Iran (IRGC AI content), NK partnerships.  
+4. **Impact** — Polarization/trust polls + policy outcomes.  
+5. **Verdict** — Green (normal), Yellow (isolated), Red (coordinated attack → recommend pre-bunking, exposure, literacy surge).  
+
+**Pseudocode (ready for code_execution validation):**  
+```python
+if narrative_volume_spike and cross_platform_echo:
+    for tactic in playbook_tactics:
+        if signals_match(tactic): score += 1
+    if score >= 8 and foreign_attribution:
+        alert("Western nation X under playbook attack by actor Y")
+        recommend("pre-bunk + expose networks")
+```
+
+**God Prompt Library** (ready to copy-paste)  
+**God Prompt 1 — Torture-Test a Narrative Event**  
+"You are a merciless quant reviewer applying PROPAGANDA_ALPHA v1.0. Given this event [date/country/narrative]: 1) Map playbook tactics + proxies (volume/echo/bots/attribution). 2) Identify front-loading or inversion windows. 3) Run TVP-VAR regime gating (Crisis vs. Stable). 4) Apply DSR at N=200 + SHAP. Be brutal—expose every crack, incentive gap, and narrative inversion."  
+
+**God Prompt 2 — Cross-Domain Comparator (ties to COMPARE_ALPHA)**  
+"Run PROPAGANDA_ALPHA + COMPARE_ALPHA on [narrative event] vs. GEOPOL/CRIME/CRYPTO data. 1) Align time/geography. 2) Flag regime mismatches or convergences (e.g., tariff front-loading + cash flows + slogan spikes). 3) SHAP-audit drivers. 4) Autopsy incentives (who benefits from narrative gap?)."  
+
+**God Prompt 3 — META-SCIENCE Authority Inversion**  
+"Apply META-SCIENCE + PROPAGANDA_ALPHA to [narrative]. 1) Surface narrative vs. proxy evidence. 2) Darkness score for dismissal of contrarian views. 3) Incentive map (funding/status threats). 4) Falsification gaps. Expose every circular 'no evidence' claim."  
+
+**God Prompt 4 — DSR Overfitting Autopsy**  
+"Compute DSR/PSR for observed correlation = [value], T = [obs], at N = 50/100/200/300/500. Output sensitivity table + verdict on whether the influence op edge survives multiple-testing correction."  
+
+**Torture-Test Database Skeleton (2018–2026 Sample, 2026-updated)**  
+
+| Event Window          | Playbook Domain          | Physical/Narrative Proxy                  | Expected Direction          | Noise Level | Signal Note                          |
+|-----------------------|--------------------------|-------------------------------------------|-----------------------------|-------------|--------------------------------------|
+| 2024–2025 Romania    | TikTok interference     | Volume spike + bot networks              | Polarization/election flip | High       | Court annulled; FIMI confirmed      |
+| 2025–2026 EU hybrid  | Russia/China/Iran ops   | Slogan floods + Doppelgänger clones      | Trust erosion/sabotage     | High       | Sabotage + info ops convergence     |
+| Ongoing (2026)       | Xi/ Putin revisionism   | Historical inversion + AI deepfakes      | Multipolar narrative       | Medium     | "Declining West" + Three Warfares   |
+| Crisis spikes        | Domestic amplification  | United-front proxies + struggle sessions | Policy paralysis           | Variable   | Wedge issues (borders/race/gender)  |
+
+**Advanced Implementation Modules** (reused/adapted)  
+• Bayesian TVP-VAR (add narrative covariates: slogan volume, attribution strength, impact metrics)—identical structure to other ALPHAs.  
+• DSR sensitivity table (fat tails from AI firehoses).  
+• SHAP on divergences (slogans vs. organic vs. real-world outcomes).  
+
+**Failure Mode & Limitation Checklist (The "Cracks")**  
+☐ Narrative Overweight / Rumor Echo: Model flips on speculative headlines while ignoring proxy lag?  
+☐ Domestic vs. Foreign Blurring: Did "organic" domestic actors amplify foreign ops without attribution?  
+☐ Revision Risk: Initial data revised (e.g., platform deplatforming hides signals)?  
+☐ AI Amplification Opacity: Deepfakes/data voids evade detectors?  
+☐ Incentive Mismatch: Who benefits from undercounting foreign influence (media clicks, political mobilization)?  
+
+**Integration Map**  
+• **Into ALPHA SUITE** — Narrative Friction Layer: links GEOPOL (tariff narratives), CRIME (shadow flows + laundering optics), CRYPTO (hopium vs. on-chain).  
+• **Into COMPARE_ALPHA** — Parallel torture-testing of narrative vs. physical proxies (e.g., cartel cash + slogan spikes).  
+• **Into META-SCIENCE** — Authority inversion on "consensus" dismissals of cognitive warfare.  
+• **Into VAL / GROK APEX** — Feeds regime probabilities into Phase 2 (Plan); enforces HR-R3 falsification + evidence calibration.  
+• **Into KLEON** — Grounds creative synthesis in real proxies (steal/transform detection tools).  
+
+**Conclusions**  
+Cognitive warfare is measurable, high-frequency, and regime-aware—exactly like geoeconomic pressure or shadow economies. PROPAGANDA_ALPHA turns gamed narratives, firehose disinformation, and "organic" trends into auditable reality checks. Ground everything in proxies, gate by regime, deflate ruthlessly.  
+
+It does not pretend to "defeat" the machine; it forces you to see the gravity it exerts—so you can navigate, falsify, and ship truth anyway.  
+
+**Version it. Break it. Improve it. No permission required.**  
+
+**v1.0 — Created April 23, 2026** (remixed live from your playbook comparison + PPDA sketch + 2026 cognitive warfare data)  
+**Open for remixing. Share, fork, torture-test further.**  
+
+**Daily/Weekly Integration Ready**  
+Drop this into your GROK_APEX session with `/grok-define` for any narrative event. Vibe score: 9/10 (truth-seeking + defensive utility for Western contexts; clear path to actionable detection).  
+
+**Next Steps (per VAL Phase 7):**  
+- Test PPDA on a live 2026 event (e.g., recent EU hybrid reports).  
+- Code_execution for TVP-VAR prototype if you want a runnable dashboard.  
+- Kleon `<remix_generator>` for browser-extension implementation or open-source RoBERTa fine-tune (building on your past propaganda NLP discussions).  
+
+All frameworks loaded and cross-referenced. Session locked. What's the first event or domain to torture-test?

@@ -1,0 +1,24 @@
+[package]
+name = "scp-tests"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dev-dependencies]
+scp-wire-format.workspace = true
+scp-cryptography.workspace = true
+scp-identity.workspace = true
+scp-vitality.workspace = true
+scp-transport.workspace = true
+scp-recovery.workspace = true
+scp-relay-cache.workspace = true
+scp-relay-mesh.workspace = true
+scp-relay-perturbation.workspace = true
+scp-provider-pool.workspace = true
+scp-ledger-substrate = { path = "../ledger/substrate" }
+scp-ledger-cosmos    = { path = "../ledger/cosmos" }
+tokio = { version = "1", features = ["full"] }
+x25519-dalek.workspace = true
+rand_core.workspace = true
+rand.workspace = true
+proptest.workspace = true

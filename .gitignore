@@ -40,8 +40,40 @@ docker/*.digest
 # Dagger
 .dagger/
 
+# Binary documents and reference papers — store externally, not in git
+*.pdf
+*.docx
+*.doc
+*.docm
+*.xlsx
+*.xls
+*.xlsm
+*.pptx
+*.ppt
+*.odt
+*.ods
+*.odp
+
+# Archives
+*.zip
+*.tar.gz
+*.tgz
+*.tar.bz2
+*.7z
+*.rar
+
+# Media and image blobs (project-level; tauri icons are scoped under scp/)
+# Use scp/tolsv3/artifact_lens_project/.gitignore for image test fixtures
+
+# OS junk
+.DS_Store
+**/.DS_Store
+Thumbs.db
+desktop.ini
+
 # IDE
 .vscode/
 .idea/
 *.swp
 *.swo
+*~

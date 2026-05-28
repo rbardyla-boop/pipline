@@ -1,0 +1,11 @@
+[package]
+name = "scp-relay-perturbation"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+tokio.workspace = true
+rand.workspace = true
+scp-relay-mesh.workspace = true
+scp-vitality.workspace = true

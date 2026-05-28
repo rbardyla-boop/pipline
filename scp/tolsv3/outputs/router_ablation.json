@@ -1,0 +1,434 @@
+[
+  {
+    "n_steps": 1,
+    "K": 1.0,
+    "gate_alpha": 0.0,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.3091
+  },
+  {
+    "n_steps": 1,
+    "K": 1.0,
+    "gate_alpha": 0.25,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.3138
+  },
+  {
+    "n_steps": 1,
+    "K": 1.0,
+    "gate_alpha": 0.5,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.317
+  },
+  {
+    "n_steps": 1,
+    "K": 1.0,
+    "gate_alpha": 0.75,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.3092
+  },
+  {
+    "n_steps": 1,
+    "K": 4.0,
+    "gate_alpha": 0.0,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.3069
+  },
+  {
+    "n_steps": 1,
+    "K": 4.0,
+    "gate_alpha": 0.25,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.305
+  },
+  {
+    "n_steps": 1,
+    "K": 4.0,
+    "gate_alpha": 0.5,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.3066
+  },
+  {
+    "n_steps": 1,
+    "K": 4.0,
+    "gate_alpha": 0.75,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.3241
+  },
+  {
+    "n_steps": 1,
+    "K": 8.0,
+    "gate_alpha": 0.0,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.3067
+  },
+  {
+    "n_steps": 1,
+    "K": 8.0,
+    "gate_alpha": 0.25,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.3189
+  },
+  {
+    "n_steps": 1,
+    "K": 8.0,
+    "gate_alpha": 0.5,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.3144
+  },
+  {
+    "n_steps": 1,
+    "K": 8.0,
+    "gate_alpha": 0.75,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.3217
+  },
+  {
+    "n_steps": 3,
+    "K": 1.0,
+    "gate_alpha": 0.0,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.4988
+  },
+  {
+    "n_steps": 3,
+    "K": 1.0,
+    "gate_alpha": 0.25,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.507
+  },
+  {
+    "n_steps": 3,
+    "K": 1.0,
+    "gate_alpha": 0.5,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.4851
+  },
+  {
+    "n_steps": 3,
+    "K": 1.0,
+    "gate_alpha": 0.75,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.4756
+  },
+  {
+    "n_steps": 3,
+    "K": 4.0,
+    "gate_alpha": 0.0,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.476
+  },
+  {
+    "n_steps": 3,
+    "K": 4.0,
+    "gate_alpha": 0.25,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.5193
+  },
+  {
+    "n_steps": 3,
+    "K": 4.0,
+    "gate_alpha": 0.5,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.5566
+  },
+  {
+    "n_steps": 3,
+    "K": 4.0,
+    "gate_alpha": 0.75,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.4818
+  },
+  {
+    "n_steps": 3,
+    "K": 8.0,
+    "gate_alpha": 0.0,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.4918
+  },
+  {
+    "n_steps": 3,
+    "K": 8.0,
+    "gate_alpha": 0.25,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.4885
+  },
+  {
+    "n_steps": 3,
+    "K": 8.0,
+    "gate_alpha": 0.5,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.4947
+  },
+  {
+    "n_steps": 3,
+    "K": 8.0,
+    "gate_alpha": 0.75,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.4707
+  },
+  {
+    "n_steps": 5,
+    "K": 1.0,
+    "gate_alpha": 0.0,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.7219
+  },
+  {
+    "n_steps": 5,
+    "K": 1.0,
+    "gate_alpha": 0.25,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.6422
+  },
+  {
+    "n_steps": 5,
+    "K": 1.0,
+    "gate_alpha": 0.5,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.6185
+  },
+  {
+    "n_steps": 5,
+    "K": 1.0,
+    "gate_alpha": 0.75,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.6096
+  },
+  {
+    "n_steps": 5,
+    "K": 4.0,
+    "gate_alpha": 0.0,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.6528
+  },
+  {
+    "n_steps": 5,
+    "K": 4.0,
+    "gate_alpha": 0.25,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.6269
+  },
+  {
+    "n_steps": 5,
+    "K": 4.0,
+    "gate_alpha": 0.5,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.6562
+  },
+  {
+    "n_steps": 5,
+    "K": 4.0,
+    "gate_alpha": 0.75,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.6422
+  },
+  {
+    "n_steps": 5,
+    "K": 8.0,
+    "gate_alpha": 0.0,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.6225
+  },
+  {
+    "n_steps": 5,
+    "K": 8.0,
+    "gate_alpha": 0.25,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.6376
+  },
+  {
+    "n_steps": 5,
+    "K": 8.0,
+    "gate_alpha": 0.5,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.6498
+  },
+  {
+    "n_steps": 5,
+    "K": 8.0,
+    "gate_alpha": 0.75,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 0.6376
+  },
+  {
+    "n_steps": 10,
+    "K": 1.0,
+    "gate_alpha": 0.0,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 1.0232
+  },
+  {
+    "n_steps": 10,
+    "K": 1.0,
+    "gate_alpha": 0.25,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 1.0723
+  },
+  {
+    "n_steps": 10,
+    "K": 1.0,
+    "gate_alpha": 0.5,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 1.0084
+  },
+  {
+    "n_steps": 10,
+    "K": 1.0,
+    "gate_alpha": 0.75,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 1.0384
+  },
+  {
+    "n_steps": 10,
+    "K": 4.0,
+    "gate_alpha": 0.0,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 1.0766
+  },
+  {
+    "n_steps": 10,
+    "K": 4.0,
+    "gate_alpha": 0.25,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 1.0242
+  },
+  {
+    "n_steps": 10,
+    "K": 4.0,
+    "gate_alpha": 0.5,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 1.0395
+  },
+  {
+    "n_steps": 10,
+    "K": 4.0,
+    "gate_alpha": 0.75,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 1.0475
+  },
+  {
+    "n_steps": 10,
+    "K": 8.0,
+    "gate_alpha": 0.0,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 1.0665
+  },
+  {
+    "n_steps": 10,
+    "K": 8.0,
+    "gate_alpha": 0.25,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 1.0385
+  },
+  {
+    "n_steps": 10,
+    "K": 8.0,
+    "gate_alpha": 0.5,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 1.0439
+  },
+  {
+    "n_steps": 10,
+    "K": 8.0,
+    "gate_alpha": 0.75,
+    "signal_pass_rate": 1.0,
+    "noise_pass_rate": 0.0,
+    "sparsity_ratio": 0.5,
+    "router_ms": 1.117
+  }
+]
