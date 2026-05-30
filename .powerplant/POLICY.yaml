@@ -1,4 +1,4 @@
-projectId: pipline-bbcf7089
+projectId: pipline-a1e7889b
 includePaths:
   - '**/*.py'
   - tests/**
@@ -6,20 +6,15 @@ includePaths:
   - requirements.txt
   - requirements*.txt
   - setup.cfg
-  - seeds/**
-  - hypotheses/*.yaml
-  - docs/**
-  - .powerplant/POLICY.yaml
-  - .powerplant/VERIFY.yaml
 excludePaths:
   - .git/**
   - node_modules/**
-  - .venv/**
-  - '**/__pycache__/**'
   - .env
   - .env.*
   - '**/*.key'
   - '**/*.pem'
+  - .venv/**
+  - '**/__pycache__/**'
   - logs/**
   - '**/*.pdf'
   - curriculum/**
@@ -34,14 +29,9 @@ allowedReadPaths:
   - requirements.txt
   - requirements*.txt
   - setup.cfg
-  - seeds/**
-  - hypotheses/*.yaml
-  - docs/**
   - .powerplant/POLICY.yaml
   - .powerplant/VERIFY.yaml
+  - README.md
 allowedWritePaths:
   - '**/*.py'
   - tests/**
-  - docs/**
-  - .powerplant/POLICY.yaml
-  - .powerplant/VERIFY.yaml
