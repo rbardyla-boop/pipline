@@ -2,7 +2,7 @@
 
 A research pipeline that evolves creative concepts across generational mutation cycles using novelty search, cultural simulation, and LLM-based scoring. Built on the **Universal Agentic Framework (UAF)** — an architecture-agnostic simulation kernel with pluggable cognition engines.
 
-**Status:** Phase 10 · 217 tests passing · Python ≥ 3.12
+**Status:** Phase 10 · 394 passing · Python ≥ 3.12
 
 ---
 

@@ -1,0 +1,37 @@
+projectId: pipline-a1e7889b
+includePaths:
+  - '**/*.py'
+  - tests/**
+  - pyproject.toml
+  - requirements.txt
+  - requirements*.txt
+  - setup.cfg
+excludePaths:
+  - '**/.git/**'
+  - '**/node_modules/**'
+  - .env
+  - .env.*
+  - '**/*.key'
+  - '**/*.pem'
+  - '**/.venv/**'
+  - '**/__pycache__/**'
+  - logs/**
+  - '**/*.pdf'
+  - curriculum/**
+  - '*.skill'
+denyIfPresentAfterCopy:
+  - .env
+  - .git
+allowedReadPaths:
+  - '**/*.py'
+  - tests/**
+  - pyproject.toml
+  - requirements.txt
+  - requirements*.txt
+  - setup.cfg
+  - .powerplant/POLICY.yaml
+  - .powerplant/VERIFY.yaml
+  - README.md
+allowedWritePaths:
+  - '**/*.py'
+  - tests/**
