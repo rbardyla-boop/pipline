@@ -8,8 +8,14 @@
 #   (e.g. npm, python3, go, cargo). Shell builtins like "source" will not work.
 #   Use "python3 -m pytest" instead of bare "pytest" for portability.
 #
+#   required: true (default) — check must pass; failure blocks project_finalize.
+#   required: false          — advisory only; runs and records but does not block.
+#
 checks:
-  # python3 -m pytest requires pytest installed system-wide (not venv-only).
-  # Using compileall (stdlib-safe) until a capsule profile ships for Python.
   syntax-check:
     command: python3 -m compileall -q .
+    required: true
+
+  tests:
+    command: python3 -m pytest
+    required: false

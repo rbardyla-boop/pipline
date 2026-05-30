@@ -1,4 +1,4 @@
-projectId: pipline-a1e7889b
+projectId: pipeline-d4819c1a
 includePaths:
   - '**/*.py'
   - tests/**
@@ -14,11 +14,9 @@ excludePaths:
   - '**/*.key'
   - '**/*.pem'
   - '**/.venv/**'
+  - '**/venv/**'
   - '**/__pycache__/**'
-  - logs/**
-  - '**/*.pdf'
-  - curriculum/**
-  - '*.skill'
+  - '**/.pytest_cache/**'
 denyIfPresentAfterCopy:
   - .env
   - .git
@@ -33,5 +31,4 @@ allowedReadPaths:
   - .powerplant/VERIFY.yaml
   - README.md
 allowedWritePaths:
-  - '**/*.py'
-  - tests/**
+  - tests/POWERPLANT_AUDIT.md
