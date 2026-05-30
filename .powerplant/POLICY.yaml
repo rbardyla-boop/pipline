@@ -7,13 +7,13 @@ includePaths:
   - requirements*.txt
   - setup.cfg
 excludePaths:
-  - .git/**
-  - node_modules/**
+  - '**/.git/**'
+  - '**/node_modules/**'
   - .env
   - .env.*
   - '**/*.key'
   - '**/*.pem'
-  - .venv/**
+  - '**/.venv/**'
   - '**/__pycache__/**'
   - logs/**
   - '**/*.pdf'
