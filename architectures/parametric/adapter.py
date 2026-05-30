@@ -206,11 +206,11 @@ class ParametricCognition(CognitionEngine):
         vec = [0.0] * dims
         tokens = re.findall(r'\b[a-zA-Z]{3,}\b', text.lower())
         for token in tokens:
-            h = int(hashlib.md5(token.encode()).hexdigest(), 16)
+            h = int(hashlib.md5(token.encode(), usedforsecurity=False).hexdigest(), 16)
             vec[h % dims] += 1.0
         norm = math.sqrt(sum(x * x for x in vec))
         if norm < 1e-10:
-            h = int(hashlib.md5(text.encode()).hexdigest(), 16)
+            h = int(hashlib.md5(text.encode(), usedforsecurity=False).hexdigest(), 16)
             vec[h % dims] = 1.0
             norm = 1.0
         return [x / norm for x in vec]
