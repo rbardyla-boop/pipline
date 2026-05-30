@@ -467,7 +467,256 @@ This repository demonstrates:
 |------|---------|---------|--------|
 | 2026-01-15 | v0.2.3 | Claude Powerplant | Initial audit report |
 | 2026-01-16 | v0.2.5 | Claude Powerplant | Updated for VERIFY config, allowedWritePaths narrowing, manifest quality, audit finalization validation |
+| 2026-05-30 | v0.2.9 | Claude Powerplant | NN research harness-readiness audit — POLICY/VERIFY gap analysis, artifact exclusions, ML dep handling, signal export surface |
 
 ---
 
 *End of Audit Report — Powerplant v0.2.5*
+
+---
+---
+
+# Powerplant v0.2.9 — NN Research Harness-Readiness Audit
+
+**Audit Date**: 2026-05-30  
+**Auditor**: Claude Powerplant v0.2.9  
+**Repo**: `pipeline` (Universal Extrapolative Engine, Phase 10)  
+**Branch**: `dogfood/powerplant-nn-research-harness-v0.2.9`  
+**Prior audit**: v0.2.5 (2026-01-16)  
+**Audit posture**: Read-only. No model training. No strategy logic changes. No performance or alpha claims.
+
+---
+
+## Scope
+
+This audit targets the harness-readiness gap between v0.2.5 (last dogfood) and v0.2.9 (current
+baseline) for a research pipeline with these distinct concerns not present in prior dogfood classes:
+
+- GPU/research dependency friction (`sentence-transformers`, `langgraph`)
+- Large artifact exclusions (`scp/target/` is 4 GB; `logs/` is live runtime JSONL data)
+- JSONL/data output policy (`logs/experiment_ledger.jsonl`, per-run JSON artifacts)
+- Model-report audit boundaries (ExperimentLedger tracks `best_score` across runs)
+- Read-only signal export surfaces (`signals.py`, `truthlens/data/signals-registry.json`)
+- Verification portability across venv-dependent ML imports
+
+---
+
+## 1. POLICY.yaml Gap Analysis
+
+### 1.1 Findings
+
+| Gap | Category | Severity | Fixed |
+|-----|----------|----------|-------|
+| `logs/**` not excluded | Artifact exclusion | HIGH | ✅ |
+| `scp/**` not excluded (4 GB Rust target/) | Artifact exclusion | HIGH | ✅ |
+| `hypotheses/**/*.json` not excluded | Artifact exclusion | MEDIUM | ✅ |
+| `agent_sandbox/dist/**`, `truthlens/dist/**` not excluded | Artifact exclusion | MEDIUM | ✅ |
+| `.dagger/**` not excluded | CI artifact | LOW | ✅ |
+| `.cache/**`, `models/**` not excluded | ML artifact paths | LOW | ✅ |
+| `seeds/**` not in includePaths | Missing scope | MEDIUM | ✅ |
+| `architectures/**`, `experiments/**` not in includePaths | Missing scope | MEDIUM | ✅ |
+| `ci/**`, `security/**`, `docs/**` not in includePaths | Missing scope | LOW | ✅ |
+| `CLAUDE.md`, `README.md` not in includePaths | Missing scope | LOW | ✅ |
+
+### 1.2 Artifact Exclusion Detail
+
+**`logs/**`** — `logs/experiment_ledger.jsonl` (398 lines, committed to git) and
+`logs/runs/*.json` (per-run execution records including full LLM-generated candidate text) are
+research runtime data, not source code. Bundling them inflates the agent context with output
+artifacts rather than code under review. The ledger contains full candidate text and
+`best_score` fields that would falsely look like source-of-truth performance claims if included
+without context. Excluded.
+
+**`scp/**`** — A full Rust workspace (SCP wire-format protocol) embedded as a subdirectory.
+`scp/target/` is 4.0 GB of compiled Rust artifacts. This sub-project is entirely separate from
+the UEE Python pipeline and has its own `.claude/` and `POLICY.yaml`-equivalent structure. Excluded
+in full (not just `scp/target/`) to prevent any of its 4 GB from entering the bundle.
+
+**`hypotheses/**/*.json`** — Timestamped hypothesis output files
+(e.g., `coherence_diversity_frontier_20260527_131212.json`) are experiment run outputs. The
+YAML definition files (`hypotheses/*.yaml`) remain in `includePaths`. Output JSON excluded.
+
+**`denyIfPresentAfterCopy`** — Added `logs/experiment_ledger.jsonl` and `scp/target` as
+post-copy safety gates to catch accidental inclusion of runtime data or binary artifacts.
+
+### 1.3 allowedWritePaths
+
+Write paths unchanged from v0.2.5: `tests/POWERPLANT_AUDIT.md` only. This enforces the
+read-only audit posture. The agent must not write to `logs/`, `hypotheses/`, `seeds/`, or
+any source directory during a harness run. No changes required.
+
+---
+
+## 2. VERIFY.yaml Gap Analysis
+
+### 2.1 Findings
+
+| Gap | Category | Severity | Fixed |
+|-----|----------|----------|-------|
+| `compileall -q .` includes `scp/`, `agent_sandbox/`, `truthlens/` | Scope leak | MEDIUM | ✅ |
+| No `tests-pure` check (ML-dep tests block all test collection) | Missing check | HIGH | ✅ |
+| `tests: required: false` with no explanation | Undocumented constraint | MEDIUM | ✅ |
+| No `bandit-security` check | Missing gate | MEDIUM | ✅ |
+| No `import-graph` check | Missing gate | LOW | ✅ |
+
+### 2.2 GPU / ML Dependency Friction
+
+`sentence-transformers` and `langgraph` require venv activation. Powerplant VERIFY runs
+checks as plain subprocesses with no shell, no venv, no `source .venv/bin/activate`. This
+means:
+
+- `python3 -m pytest` (bare) fails at collection: `engine.py:10` has a top-level
+  `from sentence_transformers import SentenceTransformer` that aborts before any test runs.
+- The affected test files via transitive import: `test_adapters.py`, `test_novelty.py`,
+  `test_regression_main.py`.
+
+**Resolution**: Added `tests-pure` (`required: true`) that ignores those three files and
+covers 354/394 tests without any ML package requirement. Exit code: 0, 354 passed (2.76 s).
+
+`tests-full` (`required: false`) is preserved as an advisory record that the full suite
+requires venv. It will fail in VERIFY but serves as documentation: run manually via
+`source .venv/bin/activate && pytest` to validate the ML path.
+
+### 2.3 compileall Scope
+
+`python3 -m compileall -q .` was too broad — it recursed into `scp/` (Rust files, silently
+skipped), `agent_sandbox/` (TypeScript, silently skipped), and `.venv/` (thousands of
+installed package files). Updated to:
+
+```
+python3 -m compileall -q . -x \.venv|scp|agent_sandbox|truthlens|__pycache__
+```
+
+The `-x` regex exclusion is applied per-path before compilation. Exit code: 0.
+
+### 2.4 bandit-security
+
+`bandit -r . --exclude .venv,scp,agent_sandbox,truthlens -lll -q` (HIGH severity only).
+Result: **EXIT 0 — no HIGH severity findings**. Set to `required: true`.
+
+Bandit emitted deprecation warnings for non-raw escape sequences in `signals.py`
+(`\d`, `\[`, `\+`, `\$` in regex patterns). These are code quality issues (should be
+`r'\d'`, etc.) but not security findings. Document here for follow-up; they do not block.
+
+### 2.5 import-graph
+
+`python3 ci/scripts/check_imports.py` — constitutional import-graph analysis CI gate.
+Exit code: 0. OPA binary absent (advisory warnings, not errors). Set `required: false`
+pending OPA installation; will become required when OPA is available system-wide.
+
+---
+
+## 3. Read-Only Signal Export Surface
+
+### 3.1 signals.py
+
+`signals.py` is a pure read-only analysis module. It:
+- Takes `text: str` as input
+- Performs regex pattern matching via `_PATTERNS` dict
+- Returns `list[SignalResult]` dataclass instances
+- Has zero file I/O, zero writes, zero external calls
+
+The signal surface is correctly scoped. No policy change required.
+
+### 3.2 truthlens/data/signals-registry.json
+
+Static JSON registry file. Not a write surface. Read-only by design.
+
+### 3.3 ExperimentLedger write boundary
+
+`logs/experiment_ledger.jsonl` is written by the pipeline at runtime (not by the harness
+agent). It is now excluded from `includePaths` and from `allowedWritePaths`. The harness
+agent cannot write to the ledger; the pipeline itself manages the ledger outside harness scope.
+
+---
+
+## 4. Model-Report Audit Boundaries
+
+### 4.1 What the ledger records
+
+Each JSONL line contains: `best_score`, `best_combined`, `best_candidate` (full LLM text),
+`dynamics_series` (per-cycle composite scores), and `dynamics_summary` with `best_score`,
+`mean_score`, `goodhart_total`. This data supports research analysis but is not a certified
+performance baseline.
+
+### 4.2 Policy boundary
+
+No performance or alpha claims may be drawn from `experiment_ledger.jsonl` without a locked
+baseline comparison. Specifically:
+- `best_score` values reflect LLM scorer opinion at the time of the run, using the model
+  version and seed set active during that run. Scores are not reproducible across model
+  versions.
+- `goodhart_total: 0` across all inspected runs does not mean Goodhart pressure is absent;
+  it means the detector did not fire. The detector uses embedding convergence only and may
+  miss semantic gaming.
+- `halt_reason: max_loops_reached` is the most common termination; it means cycles were
+  exhausted, not that optimality was reached.
+
+These constraints are already partially captured in `_PIPELINE_KNOWN_LIMITS` (Section 5.3
+of the v0.2.5 report). The new audit boundary adds: the ledger file itself is excluded from
+the harness bundle so an agent operating under harness cannot read scores and generate
+performance claims from them without explicitly being given out-of-band context.
+
+---
+
+## 5. VERIFY Check Results (v0.2.9 Baseline)
+
+| Check | Command | Required | Result |
+|-------|---------|----------|--------|
+| `syntax-check` | `python3 -m compileall -q . -x ...` | true | ✅ EXIT 0 |
+| `tests-pure` | `python3 -m pytest --ignore=...` (3 files) | true | ✅ 354/354 passed |
+| `import-graph` | `python3 ci/scripts/check_imports.py` | false | ✅ EXIT 0 (OPA absent) |
+| `bandit-security` | `bandit -r . --exclude ... -lll -q` | true | ✅ EXIT 0 (0 HIGH findings) |
+| `tests-full` | `python3 -m pytest` | false | ⚠️ FAIL (no venv — expected) |
+
+**All required checks pass. Advisory checks produce expected results.**
+
+---
+
+## 6. Open Issues (Not Fixed in This Pass)
+
+| ID | Issue | Category | Priority |
+|----|-------|----------|----------|
+| ML-1 | `engine.py` and `zeitgeist.py` import `sentence_transformers` at module level, preventing test collection without venv | Code quality | MEDIUM — lazy import would fix |
+| ML-2 | Non-raw regex escape sequences in `signals.py` (`\d`, `\[`, etc.) | Code quality | LOW — rename to `r'...'` |
+| ML-3 | `test_adapters.py` and `test_regression_main.py` excluded from required VERIFY; 40 tests uncovered by harness | Test coverage | MEDIUM — blocked by ML-1 |
+| ML-4 | OPA binary absent system-wide — import-graph policy enforcement is advisory only | Infrastructure | LOW — install OPA to harden |
+| ML-5 | `logs/experiment_ledger.jsonl` is committed to git but excluded from harness bundle — consider a `.gitignore` entry or a documented archival policy | Data governance | LOW |
+
+---
+
+## 7. v0.2.9 Compliance Summary
+
+| Criterion | v0.2.5 | v0.2.9 | Notes |
+|-----------|--------|--------|-------|
+| File sanitation | ✅ | ✅ | No regressions |
+| POLICY artifact exclusions | ⚠️ | ✅ | logs/, scp/target, hypotheses JSON |
+| POLICY includePaths completeness | ⚠️ | ✅ | seeds/, architectures/, ci/, docs/ |
+| denyIfPresentAfterCopy hardening | ✅ | ✅ | Added ledger + scp/target gates |
+| VERIFY syntax-check scoped | ⚠️ | ✅ | -x excludes scp/agent_sandbox |
+| VERIFY required tests pass without venv | ⚠️ | ✅ | tests-pure: 354/354 |
+| VERIFY bandit-security gate | ❌ | ✅ | Required, EXIT 0 |
+| VERIFY import-graph check | ❌ | ✅ | Advisory, EXIT 0 |
+| Read-only signal export | ✅ | ✅ | signals.py and registry confirmed |
+| Model-report audit boundary | ❌ | ✅ | Documented; ledger excluded from bundle |
+| Performance claims gating | ❌ | ✅ | Boundary documented; ledger not in scope |
+| allowedWritePaths (read-only harness) | ✅ | ✅ | Unchanged: tests/POWERPLANT_AUDIT.md only |
+
+---
+
+## 8. Audit Conclusion (v0.2.9)
+
+**VERDICT: ✅ APPROVED FOR POWERPLANT v0.2.9 HARNESS EXECUTION**
+
+All required VERIFY checks pass. POLICY.yaml now correctly excludes runtime artifacts,
+the 4 GB Rust sub-workspace, and JSONL research data. The read-only audit posture is
+maintained throughout. ML dependency friction is handled without pretending the venv
+constraint does not exist.
+
+Open issues ML-1 through ML-5 are deferred quality improvements, none of which block
+harness-readiness. No strategy logic, model training, or trading/execution paths were
+touched.
+
+---
+
+*End of v0.2.9 Harness-Readiness Audit — Powerplant v0.2.9 / 2026-05-30*

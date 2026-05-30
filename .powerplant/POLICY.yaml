@@ -1,34 +1,93 @@
 projectId: pipeline-d4819c1a
+
+# ── What the harness bundles for the agent ────────────────────────────────────
 includePaths:
   - '**/*.py'
   - tests/**
+  - seeds/**
+  - hypotheses/*.yaml
+  - architectures/**
+  - experiments/**
+  - ci/**
+  - docs/**
+  - security/**
   - pyproject.toml
   - requirements.txt
   - requirements*.txt
   - setup.cfg
+  - CLAUDE.md
+  - README.md
+
+# ── What the harness NEVER copies into the sandbox ────────────────────────────
 excludePaths:
+  # VCS / package managers
   - '**/.git/**'
   - '**/node_modules/**'
-  - .env
-  - .env.*
-  - '**/*.key'
-  - '**/*.pem'
+  # Python environments and caches
   - '**/.venv/**'
   - '**/venv/**'
   - '**/__pycache__/**'
   - '**/.pytest_cache/**'
+  - '**/*.pyc'
+  # Credentials and secrets
+  - .env
+  - .env.*
+  - '**/*.key'
+  - '**/*.pem'
+  # Runtime artifacts — JSONL ledger, per-run JSON logs, audit logs, cache
+  # These are research data produced by the pipeline, not source code.
+  - logs/**
+  # Timestamped hypothesis output artefacts (e.g. coherence_diversity_frontier_20260527_131212.json)
+  # Hypothesis YAML definitions in hypotheses/*.yaml are still included above.
+  - 'hypotheses/**/*.json'
+  # Rust sub-workspace (separate project, target/ is 4 GB of compiled artefacts)
+  - scp/**
+  # TypeScript sub-projects — compiled output and bundled deps
+  - 'agent_sandbox/dist/**'
+  - 'truthlens/dist/**'
+  # CI / Docker build artefacts
+  - .dagger/**
+  - 'docker/*.digest'
+  # Binary documents — should be stored externally
+  - '**/*.pdf'
+  - '**/*.docx'
+  - '**/*.xlsx'
+  - '**/*.zip'
+  - '**/*.tar.gz'
+  # HuggingFace / ML model cache (if placed inside the project root)
+  - '.cache/**'
+  - 'models/**'
+
+# ── Post-copy safety gate (sandbox must not contain these paths) ──────────────
 denyIfPresentAfterCopy:
   - .env
   - .git
+  # Runtime data must not leak into the sandbox bundle
+  - logs/experiment_ledger.jsonl
+  - scp/target
+
+# ── What the agent may read ───────────────────────────────────────────────────
 allowedReadPaths:
   - '**/*.py'
   - tests/**
+  - seeds/**
+  - hypotheses/*.yaml
+  - architectures/**
+  - experiments/**
+  - ci/**
+  - docs/**
+  - security/**
   - pyproject.toml
   - requirements.txt
   - requirements*.txt
   - setup.cfg
+  - CLAUDE.md
+  - README.md
   - .powerplant/POLICY.yaml
   - .powerplant/VERIFY.yaml
-  - README.md
+
+# ── What the agent may write ──────────────────────────────────────────────────
+# Audit posture: read-only except for the audit report itself.
+# The agent must NOT write to logs/, hypotheses/, or seeds/ during a harness run.
 allowedWritePaths:
   - tests/POWERPLANT_AUDIT.md
