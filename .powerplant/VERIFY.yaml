@@ -1,0 +1,5 @@
+checks:
+  syntax-check:
+    command: python3 -m compileall -q .
+  smoke-tests:
+    command: python3 -m pytest tests/ -q

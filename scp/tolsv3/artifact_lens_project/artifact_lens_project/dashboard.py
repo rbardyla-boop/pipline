@@ -24,17 +24,17 @@ class ArtifactDashboard:
         fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(11, 14), sharex=True)
 
         # --- 1. KAPPA (κ) CURVE & REGIME MARKERS ---
-        ax1.plot(qualities, kappas, 'o-', color='#2c3e50', linewidth=2, label="$\kappa$ (Stability)")
+        ax1.plot(qualities, kappas, 'o-', color='#2c3e50', linewidth=2, label=r"$\kappa$ (Stability)")
         ax1.axhline(self.clean_thresh, color='green', linestyle='--', alpha=0.5, label="Clean Limit")
         ax1.axhline(self.degraded_thresh, color='red', linestyle='--', alpha=0.5, label="Degraded Limit")
-        
+
         # Highlight Instability Points (Ghost Points)
         for i in range(1, len(kappas)):
             if abs(kappas[i] - kappas[i-1]) > 5:
                 ax1.scatter(qualities[i], kappas[i], s=150, facecolors='none', edgecolors='red', linewidth=2)
 
-        ax1.set_title(f"Spectral Stability Profile ($\kappa$)", loc='left', fontsize=12, fontweight='bold')
-        ax1.set_ylabel("Condition Number ($\kappa$)")
+        ax1.set_title(r"Spectral Stability Profile ($\kappa$)", loc='left', fontsize=12, fontweight='bold')
+        ax1.set_ylabel(r"Condition Number ($\kappa$)")
         ax1.legend(loc='upper right')
         ax1.grid(True, alpha=0.2)
 

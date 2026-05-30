@@ -1,0 +1,47 @@
+projectId: pipline-bbcf7089
+includePaths:
+  - '**/*.py'
+  - tests/**
+  - pyproject.toml
+  - requirements.txt
+  - requirements*.txt
+  - setup.cfg
+  - seeds/**
+  - hypotheses/*.yaml
+  - docs/**
+  - .powerplant/POLICY.yaml
+  - .powerplant/VERIFY.yaml
+excludePaths:
+  - .git/**
+  - node_modules/**
+  - .venv/**
+  - '**/__pycache__/**'
+  - .env
+  - .env.*
+  - '**/*.key'
+  - '**/*.pem'
+  - logs/**
+  - '**/*.pdf'
+  - curriculum/**
+  - '*.skill'
+denyIfPresentAfterCopy:
+  - .env
+  - .git
+allowedReadPaths:
+  - '**/*.py'
+  - tests/**
+  - pyproject.toml
+  - requirements.txt
+  - requirements*.txt
+  - setup.cfg
+  - seeds/**
+  - hypotheses/*.yaml
+  - docs/**
+  - .powerplant/POLICY.yaml
+  - .powerplant/VERIFY.yaml
+allowedWritePaths:
+  - '**/*.py'
+  - tests/**
+  - docs/**
+  - .powerplant/POLICY.yaml
+  - .powerplant/VERIFY.yaml
