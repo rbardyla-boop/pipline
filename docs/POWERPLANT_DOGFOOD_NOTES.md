@@ -161,3 +161,95 @@ None observed. 394/394 passing consistently. CUDA warning present (old driver) b
 7. **Tool budget for research repos**: 30-call cap is exhausted by discovery alone on multi-file repos. Consider per-phase budgets (discovery / write / finalize) or a higher cap for `powerplant run`.
 8. **`review` surfaces `terminationReason`**: When `artifactsComplete: false`, the review TUI should show the termination reason rather than a bare FAIL with no diff. Actionable message: "Run terminated before finalization (budget exhausted) — no patch produced."
 9. **README.md in allowedReadPaths by default**: Init should include README.md (read-only) so agent has project context. Currently rejected at read time.
+
+---
+
+# v0.2.3 Rerun — 2026-05-30
+
+**Branch:** `dogfood/powerplant-sim-harness-rerun-0.2.3`
+**Powerplant version:** 0.2.3
+**Run IDs:** pp-run-1780159388442 (FAIL — audit-only framing), pp-run-1780160215069 (PASS)
+**Trigger:** excludePaths bug fixed in v0.2.3; re-running to confirm clean snapshot before Wave 2.
+
+---
+
+## Pre-run findings fixed during setup
+
+### POLICY.yaml: nested .venv not excluded
+
+`excludePaths: ['.venv/**']` only matches a root-level `.venv/`.
+`scp/tolsv3/artifact_lens_project/.venv/` (nested) leaked through, inflating the snapshot from 213 project files to **1,947 files** (1,706 from nested site-packages).
+
+**Fix:** Changed `.venv/**` → `**/.venv/**` and `.git/**` → `**/.git/**`, `node_modules/**` → `**/node_modules/**`.
+Snapshot size returned to **213 files** (zero .venv entries in SANITIZED_MANIFEST).
+
+**Powerplant issue (Patch A):** Generated POLICY.yaml defaults should use deep-match forms for all environment/cache patterns:
+- `.venv/**` → `**/.venv/**`
+- `venv/**` → `**/venv/**`
+- `node_modules/**` → `**/node_modules/**`
+- `.git/**` → `**/.git/**`
+- Also add `**/.pytest_cache/**` to defaults
+
+---
+
+## Run 1 — pp-run-1780159388442: FAILED_INCOMPLETE_AGENT_RUN
+
+Task was framed as audit-only with no explicit write target. The agent read 5 files, produced a text response, and the broker session ended without calling `project_finalize`. Result: `terminationReason: FAILED_INCOMPLETE_AGENT_RUN`, `finalizeAttempted: false`, `artifactsComplete: false`.
+
+The harness expects a patch path for every run. A read-only audit produces correct output as agent text but the review/classification system cannot record it.
+
+**Powerplant issue (Patch B):** Audit-only runs are not first-class. Two possible fixes:
+1. Short-term: surface `terminationReason` in `powerplant review` for incomplete runs so the failure is diagnosable without reading RUN_CLASSIFICATION.json directly.
+2. Long-term: support a soft no-write mode — agent can call `project_finalize` with no file changes, and the run is classified as PASS if checks pass.
+
+**Workaround:** Add an explicit write target (`tests/POWERPLANT_AUDIT.md`) to force the agent through the patch/finalize path.
+
+---
+
+## Run 2 — pp-run-1780160215069: PASS
+
+Rerun with explicit write target. Tool call sequence:
+
+```
+project_list_files:  1
+project_read_file:   8  (simulator.py, orchestrator.py, engine.py, conftest.py,
+                         tests/test_regression_main.py, requirements.txt,
+                         pyproject.toml, .powerplant/POLICY.yaml rejected)
+project_write_file:  1  (tests/POWERPLANT_AUDIT.md)
+project_run_check:   1  (syntax-check PASS)
+project_finalize:    1
+```
+
+Total tool calls: **12** — far below the 30-cap. The v0.2.3 excludePaths fix was the difference; the prior run cap-out was caused by discovery bloat from the nested .venv, not budget architecture.
+
+### Acceptance criteria
+
+| Criterion | Result |
+|-----------|--------|
+| `artifactsComplete` | true |
+| `terminationReason` | COMPLETED |
+| `patchEligibleForApplication` | true |
+| SANITIZED_MANIFEST `.venv` hits | 0 |
+| Changed files | `tests/POWERPLANT_AUDIT.md` only |
+| Simulator benchmark/scoring changed | NO |
+| Model-performance claims added | NO |
+
+### Patch side-effect: binary .pyc diffs
+
+`compileall` writes updated `.pyc` files into `tests/__pycache__/` during the syntax check. These appear as "Binary files ... differ" in PATCH.diff. They are informational diff lines with no binary content — `git apply` skips them. Commit contains only the Markdown audit report.
+
+**Powerplant issue (Patch A, minor):** The patch builder should exclude `**/__pycache__/**` from PATCH.diff even when within an allowedWritePath like `tests/**`. The verify check should not pollute the patch with its side-effect files.
+
+---
+
+## Decision: Wave 2 scope
+
+Original Wave 2 framing ("redesign discovery and finalization") was premature. The 30-tool exhaustion in the 0.2.2 run was caused by nested .venv inflating discovery, not by discovery budget architecture.
+
+With the .venv fix applied, the same task completed in **12 tool calls**.
+
+**Wave 2 should be:**
+- Patch A: tighten POLICY.yaml generated defaults (nested env/cache glob patterns)
+- Patch B: surface `terminationReason` on incomplete runs; add soft no-write finalization path
+
+**Discovery-budget architecture: deferred.** Not justified by current evidence.
